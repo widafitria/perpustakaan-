@@ -153,7 +153,6 @@
         let currentUser = null;
         let modalCallback = null;
 
-        // Tarif denda per hari (Rp)
         const DAILY_FINE = 1000;
 
         function showToast(msg, type = "success") {
@@ -168,7 +167,6 @@
         function getDueDate(loanDate) { const due = new Date(loanDate); due.setDate(due.getDate() + 7); return due.toISOString(); }
         function isOverdue(dueDate) { return new Date() > new Date(dueDate); }
 
-        // Hitung denda: jumlah hari keterlambatan * DAILY_FINE
         function calculateLateFee(dueDateStr, returnDateStr) {
             const due = new Date(dueDateStr);
             const ret = new Date(returnDateStr);
@@ -305,7 +303,6 @@
             else if (section === "adminReturns") await renderAdminReturns(container);
         }
 
-        // Buku (tidak berubah)
         async function renderAdminBooks(container) {
             let books = await loadBooks();
             container.innerHTML = `
@@ -380,7 +377,7 @@
             let members = await loadMembers();
             container.innerHTML = `
                 <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-users text-pink-500"></i> Manajemen Anggota</h2><button id="addMemberBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-user-plus"></i> Tambah Anggota</button></div>
-                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tanggal Daftar</th><th>Aksi</th></tr></thead><tbody id="membersTableBody"></tbody></table></div>
+                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tanggal Daftar</th><th>Aksi</th></table></thead><tbody id="membersTableBody"></tbody></table></div>
             `;
             const renderTable = () => {
                 document.getElementById("membersTableBody").innerHTML = members.map(m => `
@@ -440,7 +437,7 @@
             };
         }
 
-        // Peminjaman (Admin) - dengan perpanjangan manual
+        // Peminjaman (Admin) dengan tombol warna pink yang berbeda
         async function renderAdminLoans(container) {
             let loans = await loadLoans();
             const books = await loadBooks();
@@ -457,8 +454,8 @@
                     const statusClass = l.status === 'returned' ? 'bg-green-100 text-green-700' : (overdue ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
                     return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.memberName}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium"><span class="px-2 py-1 rounded-full text-xs ${statusClass}">${statusText}</span></td><td class="font-medium">
                         ${l.status === 'borrowed' ? `
-                            <button data-id="${l.id}" class="extendLoanBtn bg-green-600 text-white px-2 py-1 rounded mr-1" title="Perpanjang Jatuh Tempo"><i class="fas fa-calendar-plus"></i> Perpanjang</button>
-                            <button data-id="${l.id}" class="returnLoanBtn bg-blue-500 text-white px-2 py-1 rounded">Kembalikan</button>
+                            <button data-id="${l.id}" class="extendLoanBtn bg-pink-400 hover:bg-pink-500 text-white px-2 py-1 rounded mr-1" title="Perpanjang Jatuh Tempo"><i class="fas fa-calendar-plus"></i> Perpanjang</button>
+                            <button data-id="${l.id}" class="returnLoanBtn bg-pink-600 hover:bg-pink-700 text-white px-2 py-1 rounded">Kembalikan</button>
                         ` : '-'}
                     </td></tr>`;
                 }).join('');
@@ -512,13 +509,9 @@
                 if (!loan.exists() || loan.data().status === 'returned') return;
                 const loanData = loan.data();
                 const returnDate = new Date().toISOString();
-                // Hitung denda
                 const lateFee = calculateLateFee(loanData.dueDate, returnDate);
-                // Simpan ke returns
                 await addDoc(returnsCol, { loanId, returnDate, lateFee });
-                // Update loan status
                 await updateDoc(loanRef, { status: "returned", returnDate });
-                // Kembalikan stok buku
                 const bookRef = doc(booksCol, loanData.bookId);
                 const bookSnap = await getDoc(bookRef);
                 if (bookSnap.exists()) await updateDoc(bookRef, { availableStock: bookSnap.data().availableStock + 1 });
@@ -532,7 +525,7 @@
             };
         }
 
-        // Data Pengembalian (Admin) - menampilkan denda
+        // Data Pengembalian (Admin) - denda Rp0 berwarna pink, bukan hijau
         async function renderAdminReturns(container) {
             let returns = await loadReturns();
             container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-undo-alt text-pink-500"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th></tr></thead><tbody>${returns.map(r => {
@@ -540,7 +533,8 @@
                 const loanDateFormatted = formatDate(r.loanDate);
                 const returnDateFormatted = formatDate(r.returnDate);
                 const fineFormatted = `Rp${(r.lateFee || 0).toLocaleString()}`;
-                return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${loanDateFormatted}</td><td class="font-medium">${dueDateFormatted}</td><td class="font-medium">${returnDateFormatted}</td><td class="font-medium ${r.lateFee > 0 ? 'text-red-600 font-semibold' : 'text-green-600'}">${fineFormatted}</td></tr>`;
+                const fineColor = (r.lateFee > 0) ? 'text-red-600 font-semibold' : 'text-pink-500';  // Rp0 jadi pink
+                return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${loanDateFormatted}</td><td class="font-medium">${dueDateFormatted}</td><td class="font-medium">${returnDateFormatted}</td><td class="font-medium ${fineColor}">${fineFormatted}</td></tr>`;
             }).join('')}</tbody></table></div>`;
         }
 
@@ -589,7 +583,7 @@
             if (!currentUser.memberId) return;
             let all = await loadLoans();
             const myLoans = all.filter(l => l.memberId === currentUser.memberId);
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<td><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`; }).join('')}</tbody></table></div>`;
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`; }).join('')}</tbody></table></div>`;
         }
 
         async function renderUserReturn(container) {
