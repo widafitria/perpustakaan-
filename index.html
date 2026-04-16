@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Perpustakaan</title>
+    <title>Perpustakaan Digital | UKK 2025/2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,104 +12,41 @@
             theme: {
                 extend: {
                     fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
-                    animation: {
-                        'float': 'float 8s ease-in-out infinite',
-                        'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'shimmer': 'shimmer 3s infinite',
-                    },
-                    keyframes: {
-                        float: { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-15px)' } },
-                        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
-                    }
+                    animation: { 'float': 'float 6s ease-in-out infinite' },
+                    keyframes: { float: { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-10px)' } } }
                 }
             }
         }
     </script>
     <style>
-        /* Background utama yang menarik: gradien dinamis + pola halus */
+        /* Background pink aesthetic dengan gradasi lembut */
         .bg-gradient-main {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            position: relative;
-            overflow-x: hidden;
+            background: linear-gradient(135deg, #fbc2eb 0%, #fdc5e6 25%, #f8a5c2 50%, #ffc3e0 100%);
+            background-attachment: fixed;
         }
-        /* Efek orbs berwarna pastel yang bergerak */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(70px);
-            opacity: 0.4;
-            animation: float 12s infinite alternate;
-        }
-        .orb-1 { width: 400px; height: 400px; background: #3b82f6; top: -100px; left: -100px; animation-duration: 18s; }
-        .orb-2 { width: 500px; height: 500px; background: #8b5cf6; bottom: -150px; right: -150px; animation-duration: 22s; }
-        .orb-3 { width: 300px; height: 300px; background: #ec4899; top: 40%; left: 60%; animation-duration: 15s; opacity: 0.3; }
-        .orb-4 { width: 350px; height: 350px; background: #14b8a6; bottom: 20%; left: 10%; animation-duration: 20s; opacity: 0.25; }
-        
-        /* Glass card lebih elegan */
         .glass-card {
-            background: rgba(15, 25, 45, 0.65);
-            backdrop-filter: blur(16px);
-            border-radius: 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
-        /* Tabel transparan dengan border halus */
-        .table-modern td, .table-modern th {
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .table-modern th {
-            background: rgba(255,255,255,0.08);
-            font-weight: 600;
-        }
-        .table-modern tbody tr:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        /* Tombol lebih halus */
         .btn-primary {
-            background: linear-gradient(95deg, #3b82f6, #2563eb);
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+            background: linear-gradient(95deg, #e91e63, #c2185b);
+            transition: all 0.2s;
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59,130,246,0.4);
+            box-shadow: 0 10px 20px -5px #e91e6380;
         }
-        /* Modal tetap putih agar mudah dibaca */
-        .modal-bg { background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); }
-        /* Teks pada card menjadi lebih terang */
-        .glass-card, .glass-card * {
-            color: #f1f5f9;
-        }
-        .glass-card input, .glass-card select, .glass-card textarea {
-            background: rgba(30,41,59,0.8);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-        }
-        .glass-card input:focus, .glass-card select:focus {
-            border-color: #3b82f6;
-            outline: none;
-            ring: 2px solid #3b82f6;
-        }
-        .glass-card button.bg-white\/30 {
-            background: rgba(255,255,255,0.15);
-            color: white;
-        }
-        .glass-card button.bg-white\/30:hover {
-            background: rgba(255,255,255,0.25);
-        }
-        /* Warna tabel di dalam glass-card */
-        .bg-white\/70, .bg-white\/80, .bg-white\/50 {
-            background: rgba(30,41,59,0.7) !important;
-            color: #e2e8f0;
-        }
-        .bg-blue-50, .bg-green-50, .bg-amber-50, .bg-purple-50 {
-            background: rgba(59,130,246,0.2) !important;
-        }
-        .badge-status {
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(4px);
-        }
+        .table-modern td, .table-modern th { padding: 12px 16px; border-bottom: 1px solid #ffe2f0; }
+        .modal-bg { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        /* Tabel hover lebih lembut */
+        .table-modern tbody tr:hover { background: #fff0f5; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #ffe0f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #e91e63; border-radius: 10px; }
     </style>
     <script type="importmap">
         {
@@ -120,71 +57,67 @@
         }
     </script>
 </head>
-<body class="bg-gradient-main font-sans antialiased min-h-screen relative">
-    <!-- Orbs dekoratif -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
+<body class="bg-gradient-main font-sans text-gray-800 min-h-screen">
+    <!-- Floating decorative elements dengan warna pink pastel -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float" style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/2 left-1/3 w-60 h-60 bg-fuchsia-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: -4s;"></div>
+    </div>
 
     <div id="app" class="relative z-10 container mx-auto px-4 py-6 max-w-7xl">
-        <!-- Login Section (dengan tampilan baru) -->
+        <!-- Login Section -->
         <div id="authSection" class="flex justify-center items-center min-h-[80vh]">
-            <div class="glass-card w-full max-w-md p-8 transition-all duration-500">
+            <div class="glass-card w-full max-w-md p-8">
                 <div class="text-center mb-6">
-                    <div class="inline-flex p-3 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-4">
-                        <i class="fas fa-book-open text-5xl text-white"></i>
-                    </div>
-                    <h2 class="text-3xl font-extrabold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Perpustakaan</h2>
-                    <p class="text-blue-200 mt-1">SMK Plus Insan Cemerlang</p>
+                    <i class="fas fa-book-open text-5xl text-pink-600 drop-shadow"></i>
+                    <h2 class="text-3xl font-bold mt-2 text-pink-800">Perpustakaan Digital</h2>
+                    <p class="text-pink-600">SMK Insan Cemerlang</p>
                 </div>
-                <div class="flex gap-2 mb-6 bg-black/20 p-1 rounded-xl">
-                    <button id="loginTabBtn" class="w-1/2 py-2 font-semibold rounded-lg bg-white/20 text-white shadow-sm">Login</button>
-                    <button id="registerTabBtn" class="w-1/2 py-2 font-semibold rounded-lg text-gray-300">Daftar Anggota</button>
+                <div class="flex gap-2 mb-6 bg-pink-100 p-1 rounded-xl">
+                    <button id="loginTabBtn" class="w-1/2 py-2 font-semibold rounded-lg bg-white text-pink-600 shadow-sm">Login</button>
+                    <button id="registerTabBtn" class="w-1/2 py-2 font-semibold rounded-lg text-pink-500">Daftar Anggota</button>
                 </div>
                 <div id="loginForm">
-                    <input type="text" id="loginUsername" placeholder="Username" class="w-full mb-3 p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400">
-                    <input type="password" id="loginPassword" placeholder="Password" class="w-full mb-4 p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400">
-                    <button id="doLoginBtn" class="w-full btn-primary text-white py-3 rounded-xl font-bold">Masuk</button>
+                    <input type="text" id="loginUsername" placeholder="Username" class="w-full mb-3 p-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-pink-400">
+                    <input type="password" id="loginPassword" placeholder="Password" class="w-full mb-4 p-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-pink-400">
+                    <button id="doLoginBtn" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg">Masuk</button>
                 </div>
                 <div id="registerForm" class="hidden">
-                    <input type="text" id="regName" placeholder="Nama Lengkap" class="w-full mb-2 p-2 rounded bg-white/10 border border-white/20 text-white">
-                    <input type="text" id="regClass" placeholder="Kelas" class="w-full mb-2 p-2 rounded bg-white/10 border border-white/20 text-white">
-                    <input type="text" id="regPhone" placeholder="Telepon" class="w-full mb-2 p-2 rounded bg-white/10 border border-white/20 text-white">
-                    <input type="text" id="regUsername" placeholder="Username" class="w-full mb-2 p-2 rounded bg-white/10 border border-white/20 text-white">
-                    <input type="password" id="regPassword" placeholder="Password" class="w-full mb-3 p-2 rounded bg-white/10 border border-white/20 text-white">
-                    <button id="doRegisterBtn" class="w-full bg-emerald-600 text-white py-2 rounded font-bold">Daftar</button>
+                    <input type="text" id="regName" placeholder="Nama Lengkap" class="w-full mb-2 p-2 border border-pink-200 rounded">
+                    <input type="text" id="regClass" placeholder="Kelas" class="w-full mb-2 p-2 border border-pink-200 rounded">
+                    <input type="text" id="regPhone" placeholder="Telepon" class="w-full mb-2 p-2 border border-pink-200 rounded">
+                    <input type="text" id="regUsername" placeholder="Username" class="w-full mb-2 p-2 border border-pink-200 rounded">
+                    <input type="password" id="regPassword" placeholder="Password" class="w-full mb-3 p-2 border border-pink-200 rounded">
+                    <button id="doRegisterBtn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-bold">Daftar</button>
                 </div>
+                <p class="text-xs text-center text-pink-500 mt-6">Demo: admin/admin123 | atau daftar sebagai anggota</p>
             </div>
         </div>
 
-        <!-- Dashboard Utama (dengan tampilan baru) -->
+        <!-- Dashboard Utama -->
         <div id="dashboardSection" class="hidden">
-            <div class="glass-card p-5 flex flex-wrap justify-between items-center mb-8 backdrop-blur-md">
-                <div class="flex items-center gap-4">
-                    <div class="bg-white/10 p-3 rounded-2xl">
-                        <i class="fas fa-landmark text-4xl text-blue-300"></i>
-                    </div>
+            <div class="glass-card p-4 flex flex-wrap justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-landmark text-3xl text-pink-700"></i>
                     <div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-white drop-shadow">Perpustakaan Incher</h1>
-                        <p class="text-blue-200">Halo, <span id="userNameDisplay" class="font-semibold"></span> · <span id="userRoleBadge" class="bg-white/20 px-2 py-0.5 rounded-full text-sm"></span></p>
+                        <h1 class="text-2xl font-bold text-pink-800">Perpustakaan Digital</h1>
+                        <p class="text-pink-700">Halo, <span id="userNameDisplay"></span> · <span id="userRoleBadge" class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-sm"></span></p>
                     </div>
                 </div>
-                <button id="logoutBtn" class="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-full transition flex items-center gap-2"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                <button id="logoutBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-full shadow"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
-            <div id="navTabs" class="flex flex-wrap gap-3 mb-8"></div>
-            <div id="contentPanel" class="glass-card p-6 min-h-[550px] transition-all">
-                <div class="text-center text-gray-300"><i class="fas fa-spinner fa-pulse text-2xl"></i><br>Memuat...</div>
-            </div>
+            <div id="navTabs" class="flex flex-wrap gap-2 mb-6"></div>
+            <div id="contentPanel" class="glass-card p-5 min-h-[500px]"><div class="text-center text-pink-500">Memuat...</div></div>
         </div>
     </div>
 
-    <!-- Modal Global untuk Form (Tambah/Edit) - tetap putih agar nyaman -->
+    <!-- Modal Global untuk Form (Tambah/Edit) -->
     <div id="modalForm" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-bg transition-all">
-        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all text-gray-800">
-            <div class="flex justify-between items-center mb-4"><h3 id="modalTitle" class="text-xl font-bold"></h3><button id="closeModalBtn" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all">
+            <div class="flex justify-between items-center mb-4"><h3 id="modalTitle" class="text-xl font-bold text-pink-700"></h3><button id="closeModalBtn" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
             <div id="modalBody"></div>
-            <div class="mt-5 flex justify-end gap-2"><button id="modalCancelBtn" class="px-4 py-2 border rounded-lg">Batal</button><button id="modalConfirmBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Simpan</button></div>
+            <div class="mt-5 flex justify-end gap-2"><button id="modalCancelBtn" class="px-4 py-2 border border-pink-300 rounded-lg text-pink-600">Batal</button><button id="modalConfirmBtn" class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600">Simpan</button></div>
         </div>
     </div>
 
@@ -219,7 +152,7 @@
 
         function showToast(msg, type = "success") {
             const toast = document.createElement("div");
-            toast.className = `fixed bottom-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-white font-medium flex items-center gap-2 ${type === 'error' ? 'bg-red-500/90 backdrop-blur' : 'bg-green-500/90 backdrop-blur'}`;
+            toast.className = `fixed bottom-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-white font-medium flex items-center gap-2 ${type === 'error' ? 'bg-red-500' : 'bg-pink-500'}`;
             toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${msg}`;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
@@ -322,7 +255,7 @@
                 ];
                 menus.forEach(menu => {
                     const btn = document.createElement("button");
-                    btn.className = "px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium transition flex items-center gap-2 backdrop-blur-sm";
+                    btn.className = "px-4 py-2 rounded-full bg-white/30 hover:bg-white/50 text-pink-800 font-medium transition flex items-center gap-2 backdrop-blur-sm";
                     btn.innerHTML = `<i class="fas ${menu.icon}"></i> ${menu.label}`;
                     btn.onclick = () => renderAdminContent(menu.id);
                     navTabs.appendChild(btn);
@@ -336,7 +269,7 @@
                 ];
                 menus.forEach(menu => {
                     const btn = document.createElement("button");
-                    btn.className = "px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium transition flex items-center gap-2 backdrop-blur-sm";
+                    btn.className = "px-4 py-2 rounded-full bg-white/30 hover:bg-white/50 text-pink-800 font-medium transition flex items-center gap-2 backdrop-blur-sm";
                     btn.innerHTML = `<i class="fas ${menu.icon}"></i> ${menu.label}`;
                     btn.onclick = () => renderUserContent(menu.id);
                     navTabs.appendChild(btn);
@@ -344,6 +277,7 @@
                 renderUserContent("userBorrow");
             }
         }
+
         // ==================== ADMIN ====================
         async function renderAdminContent(section) {
             const container = document.getElementById("contentPanel");
@@ -356,19 +290,30 @@
         async function renderAdminBooks(container) {
             let books = await loadBooks();
             container.innerHTML = `
-                <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-white"><i class="fas fa-book text-blue-400"></i> Manajemen Buku</h2><button id="addBookBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-plus"></i> Tambah Buku</button></div>
-                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/5 rounded-xl"><thead class="bg-white/10"><tr><th>Cover</th><th>Judul</th><th>Penerbit</th><th>Stok Total</th><th>Stok Tersedia</th><th>Aksi</th></tr></thead><tbody id="booksTableBody"></tbody></table></div>
+                <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-book text-pink-500"></i> Manajemen Buku</h2><button id="addBookBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-plus"></i> Tambah Buku</button></div>
+                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Judul</th><th>Penerbit</th><th>Stok Total</th><th>Stok Tersedia</th><th>Aksi</th></tr></thead><tbody id="booksTableBody"></tbody></table></div>
             `;
             const renderTable = () => {
                 document.getElementById("booksTableBody").innerHTML = books.map(b => `
-                    <tr><td class="text-3xl text-center">${b.cover || '📖'}</td><td class="font-medium">${b.title}</td><td>${b.publisher || '-'}</td><td>${b.totalStock}</td><td>${b.availableStock}</td><td><button data-id="${b.id}" class="editBookBtn text-blue-400 mr-2"><i class="fas fa-edit"></i></button><button data-id="${b.id}" class="deleteBookBtn text-red-400"><i class="fas fa-trash"></i></button></td></tr>
+                    <tr><td class="text-3xl text-center">${b.cover || '📖'}</td>
+                        <td class="font-medium">${b.title}</td>
+                        <td class="font-medium">${b.publisher || '-'}</td>
+                        <td class="font-medium">${b.totalStock}</td>
+                        <td class="font-medium">${b.availableStock}</td>
+                        <td class="font-medium"><button data-id="${b.id}" class="editBookBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${b.id}" class="deleteBookBtn text-red-500"><i class="fas fa-trash"></i></button></td>
+                    </tr>
                 `).join('');
                 document.querySelectorAll(".editBookBtn").forEach(btn => btn.onclick = () => editBook(btn.dataset.id));
                 document.querySelectorAll(".deleteBookBtn").forEach(btn => btn.onclick = () => deleteBook(btn.dataset.id));
             };
             renderTable();
             document.getElementById("addBookBtn").onclick = () => {
-                openModal("Tambah Buku", `<div class="mb-3"><label>Cover (icon/emoji)</label><input id="bookCover" class="w-full border rounded p-2" value="📚"></div><div class="mb-3"><label>Judul Buku</label><input id="bookTitle" class="w-full border rounded p-2"></div><div class="mb-3"><label>Penerbit</label><input id="bookPublisher" class="w-full border rounded p-2"></div><div class="mb-3"><label>Stok Total</label><input id="bookStock" type="number" class="w-full border rounded p-2"></div>`, async () => {
+                openModal("Tambah Buku", `
+                    <div class="mb-3"><label>Cover (icon/emoji)</label><input id="bookCover" class="w-full border rounded p-2" placeholder="📚" value="📚"></div>
+                    <div class="mb-3"><label>Judul Buku</label><input id="bookTitle" class="w-full border rounded p-2"></div>
+                    <div class="mb-3"><label>Penerbit</label><input id="bookPublisher" class="w-full border rounded p-2"></div>
+                    <div class="mb-3"><label>Stok Total</label><input id="bookStock" type="number" class="w-full border rounded p-2"></div>
+                `, async () => {
                     const cover = document.getElementById("bookCover").value || "📚";
                     const title = document.getElementById("bookTitle").value;
                     const publisher = document.getElementById("bookPublisher").value;
@@ -383,7 +328,12 @@
             window.editBook = async (id) => {
                 const ref = doc(booksCol, id);
                 const data = (await getDoc(ref)).data();
-                openModal("Edit Buku", `<div class="mb-3"><label>Cover</label><input id="bookCover" class="w-full border rounded p-2" value="${data.cover || '📚'}"></div><div class="mb-3"><label>Judul</label><input id="bookTitle" class="w-full border rounded p-2" value="${data.title}"></div><div class="mb-3"><label>Penerbit</label><input id="bookPublisher" class="w-full border rounded p-2" value="${data.publisher || ''}"></div><div class="mb-3"><label>Stok Total</label><input id="bookStock" type="number" class="w-full border rounded p-2" value="${data.totalStock}"></div>`, async () => {
+                openModal("Edit Buku", `
+                    <div class="mb-3"><label>Cover (icon/emoji)</label><input id="bookCover" class="w-full border rounded p-2" value="${data.cover || '📚'}"></div>
+                    <div class="mb-3"><label>Judul</label><input id="bookTitle" class="w-full border rounded p-2" value="${data.title}"></div>
+                    <div class="mb-3"><label>Penerbit</label><input id="bookPublisher" class="w-full border rounded p-2" value="${data.publisher || ''}"></div>
+                    <div class="mb-3"><label>Stok Total</label><input id="bookStock" type="number" class="w-full border rounded p-2" value="${data.totalStock}"></div>
+                `, async () => {
                     const newCover = document.getElementById("bookCover").value || "📚";
                     const newTitle = document.getElementById("bookTitle").value;
                     const newPub = document.getElementById("bookPublisher").value;
@@ -402,15 +352,26 @@
 
         async function renderAdminMembers(container) {
             let members = await loadMembers();
-            container.innerHTML = `<div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-white"><i class="fas fa-users text-green-400"></i> Manajemen Anggota</h2><button id="addMemberBtn" class="bg-green-600 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-user-plus"></i> Tambah Anggota</button></div><div class="overflow-x-auto"><table class="w-full table-modern bg-white/5 rounded-xl"><thead class="bg-white/10"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tanggal Daftar</th><th>Aksi</th></tr></thead><tbody id="membersTableBody"></tbody></table></div>`;
+            container.innerHTML = `
+                <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-users text-pink-500"></i> Manajemen Anggota</h2><button id="addMemberBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-user-plus"></i> Tambah Anggota</button></div>
+                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tanggal Daftar</th><th>Aksi</th></tr></thead><tbody id="membersTableBody"></tbody></table></div>
+            `;
             const renderTable = () => {
-                document.getElementById("membersTableBody").innerHTML = members.map(m => `<tr><td>${m.name}</td><td>${m.className}</td><td>${m.phone}</td><td>${formatDate(m.registerDate)}</td><td><button data-id="${m.id}" class="editMemberBtn text-green-400 mr-2"><i class="fas fa-edit"></i></button><button data-id="${m.id}" class="deleteMemberBtn text-red-400"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+                document.getElementById("membersTableBody").innerHTML = members.map(m => `
+                    <tr><td class="font-medium">${m.name}</td><td class="font-medium">${m.className}</td><td class="font-medium">${m.phone}</td><td class="font-medium">${formatDate(m.registerDate)}</td><td class="font-medium"><button data-id="${m.id}" class="editMemberBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${m.id}" class="deleteMemberBtn text-red-500"><i class="fas fa-trash"></i></button></td></tr>
+                `).join('');
                 document.querySelectorAll(".editMemberBtn").forEach(btn => btn.onclick = () => editMember(btn.dataset.id));
                 document.querySelectorAll(".deleteMemberBtn").forEach(btn => btn.onclick = () => deleteMember(btn.dataset.id));
             };
             renderTable();
             document.getElementById("addMemberBtn").onclick = () => {
-                openModal("Tambah Anggota", `<div class="mb-3"><label>Nama Lengkap</label><input id="memberName" class="w-full border rounded p-2"></div><div class="mb-3"><label>Kelas</label><input id="memberClass" class="w-full border rounded p-2"></div><div class="mb-3"><label>Telepon</label><input id="memberPhone" class="w-full border rounded p-2"></div><div class="mb-3"><label>Username</label><input id="memberUsername" class="w-full border rounded p-2"></div><div class="mb-3"><label>Password</label><input id="memberPassword" type="password" class="w-full border rounded p-2"></div>`, async () => {
+                openModal("Tambah Anggota", `
+                    <div class="mb-3"><label>Nama Lengkap</label><input id="memberName" class="w-full border rounded p-2"></div>
+                    <div class="mb-3"><label>Kelas</label><input id="memberClass" class="w-full border rounded p-2"></div>
+                    <div class="mb-3"><label>Telepon</label><input id="memberPhone" class="w-full border rounded p-2"></div>
+                    <div class="mb-3"><label>Username (untuk login)</label><input id="memberUsername" class="w-full border rounded p-2"></div>
+                    <div class="mb-3"><label>Password</label><input id="memberPassword" type="password" class="w-full border rounded p-2"></div>
+                `, async () => {
                     const name = document.getElementById("memberName").value;
                     const className = document.getElementById("memberClass").value;
                     const phone = document.getElementById("memberPhone").value;
@@ -429,7 +390,11 @@
             window.editMember = async (id) => {
                 const ref = doc(membersCol, id);
                 const data = (await getDoc(ref)).data();
-                openModal("Edit Anggota", `<div class="mb-3"><label>Nama</label><input id="memberName" class="w-full border rounded p-2" value="${data.name}"></div><div class="mb-3"><label>Kelas</label><input id="memberClass" class="w-full border rounded p-2" value="${data.className}"></div><div class="mb-3"><label>Telepon</label><input id="memberPhone" class="w-full border rounded p-2" value="${data.phone}"></div>`, async () => {
+                openModal("Edit Anggota", `
+                    <div class="mb-3"><label>Nama</label><input id="memberName" class="w-full border rounded p-2" value="${data.name}"></div>
+                    <div class="mb-3"><label>Kelas</label><input id="memberClass" class="w-full border rounded p-2" value="${data.className}"></div>
+                    <div class="mb-3"><label>Telepon</label><input id="memberPhone" class="w-full border rounded p-2" value="${data.phone}"></div>
+                `, async () => {
                     const newName = document.getElementById("memberName").value;
                     const newClass = document.getElementById("memberClass").value;
                     const newPhone = document.getElementById("memberPhone").value;
@@ -446,20 +411,32 @@
             let loans = await loadLoans();
             const books = await loadBooks();
             const members = await loadMembers();
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-white"><i class="fas fa-hand-holding text-amber-400"></i> Data Peminjaman</h2><button id="newLoanBtn" class="bg-amber-600 text-white px-4 py-2 rounded-xl shadow mb-4"><i class="fas fa-plus"></i> Peminjaman Baru</button><div class="overflow-x-auto"><table class="w-full table-modern bg-white/5 rounded-xl"><thead class="bg-white/10"><tr><th>Cover</th><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="loansTableBody"></tbody></table></div>`;
+            container.innerHTML = `
+                <h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-hand-holding text-pink-500"></i> Data Peminjaman</h2>
+                <button id="newLoanBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl shadow mb-4"><i class="fas fa-plus"></i> Peminjaman Baru</button>
+                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="loansTableBody"></tbody></table></div>
+            `;
             const renderTable = () => {
                 document.getElementById("loansTableBody").innerHTML = loans.map(l => {
                     const overdue = l.status === 'borrowed' && isOverdue(l.dueDate);
                     const statusText = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam');
-                    const statusClass = l.status === 'returned' ? 'bg-green-800/60' : (overdue ? 'bg-red-800/60' : 'bg-yellow-800/60');
-                    return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td>${l.memberName}</td><td>${l.bookTitle}</td><td>${formatDate(l.loanDate)}</td><td>${formatDate(l.dueDate)}</td><td><span class="px-2 py-1 rounded-full text-xs ${statusClass} text-white">${statusText}</span></td><td>${l.status === 'borrowed' ? `<button data-id="${l.id}" class="extendLoanBtn bg-green-600 text-white px-2 py-1 rounded mr-1"><i class="fas fa-calendar-plus"></i> Perpanjang</button><button data-id="${l.id}" class="returnLoanBtn bg-blue-600 text-white px-2 py-1 rounded">Kembalikan</button>` : '-'}</td></tr>`;
+                    const statusClass = l.status === 'returned' ? 'bg-green-100 text-green-700' : (overdue ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
+                    return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.memberName}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium"><span class="px-2 py-1 rounded-full text-xs ${statusClass}">${statusText}</span></td><td class="font-medium">
+                        ${l.status === 'borrowed' ? `
+                            <button data-id="${l.id}" class="extendLoanBtn bg-green-600 text-white px-2 py-1 rounded mr-1" title="Perpanjang Jatuh Tempo"><i class="fas fa-calendar-plus"></i> Perpanjang</button>
+                            <button data-id="${l.id}" class="returnLoanBtn bg-blue-500 text-white px-2 py-1 rounded">Kembalikan</button>
+                        ` : '-'}
+                    </td></tr>`;
                 }).join('');
                 document.querySelectorAll(".returnLoanBtn").forEach(btn => btn.onclick = () => processReturn(btn.dataset.id));
                 document.querySelectorAll(".extendLoanBtn").forEach(btn => btn.onclick = () => openExtendModal(btn.dataset.id));
             };
             renderTable();
             document.getElementById("newLoanBtn").onclick = () => {
-                openModal("Peminjaman Baru", `<div class="mb-3"><label>Pilih Anggota</label><select id="loanMember" class="w-full border rounded p-2">${members.map(m => `<option value="${m.id}">${m.name} (${m.className})</option>`).join('')}</select></div><div class="mb-3"><label>Pilih Buku</label><select id="loanBook" class="w-full border rounded p-2">${books.map(b => `<option value="${b.id}">${b.cover || '📖'} ${b.title} (Stok: ${b.availableStock})</option>`).join('')}</select></div>`, async () => {
+                openModal("Peminjaman Baru", `
+                    <div class="mb-3"><label>Pilih Anggota</label><select id="loanMember" class="w-full border rounded p-2">${members.map(m => `<option value="${m.id}">${m.name} (${m.className})</option>`).join('')}</select></div>
+                    <div class="mb-3"><label>Pilih Buku</label><select id="loanBook" class="w-full border rounded p-2">${books.map(b => `<option value="${b.id}">${b.cover || '📖'} ${b.title} (Stok: ${b.availableStock})</option>`).join('')}</select></div>
+                `, async () => {
                     const memberId = document.getElementById("loanMember").value;
                     const bookId = document.getElementById("loanBook").value;
                     const bookRef = doc(booksCol, bookId);
@@ -475,14 +452,20 @@
                 });
             };
             window.openExtendModal = (loanId) => {
-                openModal("Perpanjang Jatuh Tempo", `<div class="mb-3"><label>Pilih Tanggal Jatuh Tempo Baru</label><input type="date" id="newDueDate" class="w-full border rounded p-2" value="${new Date().toISOString().slice(0,10)}"></div><p class="text-sm text-gray-500">Anda bebas menentukan tanggal berapa pun.</p>`, async () => {
+                openModal("Perpanjang Jatuh Tempo", `
+                    <div class="mb-3"><label>Pilih Tanggal Jatuh Tempo Baru</label><input type="date" id="newDueDate" class="w-full border rounded p-2" value="${new Date().toISOString().slice(0,10)}"></div>
+                    <p class="text-sm text-gray-500">Anda bebas menentukan tanggal berapa pun.</p>
+                `, async () => {
                     const newDateStr = document.getElementById("newDueDate").value;
                     if (!newDateStr) { showToast("Pilih tanggal terlebih dahulu", "error"); return; }
                     const newDue = new Date(newDateStr);
                     if (isNaN(newDue.getTime())) { showToast("Tanggal tidak valid", "error"); return; }
                     const loanRef = doc(loansCol, loanId);
                     const loanSnap = await getDoc(loanRef);
-                    if (!loanSnap.exists() || loanSnap.data().status !== 'borrowed') { showToast("Peminjaman sudah dikembalikan", "error"); return; }
+                    if (!loanSnap.exists() || loanSnap.data().status !== 'borrowed') {
+                        showToast("Peminjaman sudah dikembalikan atau tidak ditemukan", "error");
+                        return;
+                    }
                     await updateDoc(loanRef, { dueDate: newDue.toISOString() });
                     showToast(`Jatuh tempo diperpanjang menjadi ${formatDate(newDue)}`);
                     loans = await loadLoans();
@@ -503,9 +486,10 @@
                 renderTable();
             };
         }
+
         async function renderAdminReturns(container) {
             let returns = await loadReturns();
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-white"><i class="fas fa-undo-alt text-purple-400"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/5 rounded-xl"><thead class="bg-white/10"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Tgl Kembali</th><th>Denda</th></tr></thead><tbody>${returns.map(r => `<tr><td>${r.memberName}</td><td>${r.bookTitle}</td><td>${formatDate(r.loanDate)}</td><td>${formatDate(r.returnDate)}</td><td>Rp0</td></tr>`).join('')}</tbody></table></div>`;
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-undo-alt text-pink-500"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Tgl Kembali</th><th>Denda</th></tr></thead><tbody>${returns.map(r => `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${formatDate(r.loanDate)}</td><td class="font-medium">${formatDate(r.returnDate)}</td><td class="font-medium">Rp0</td></tr>`).join('')}</tbody></table></div>`;
         }
 
         // ==================== USER ====================
@@ -517,11 +501,19 @@
         }
 
         async function renderUserBorrow(container) {
-            if (!currentUser.memberId) { container.innerHTML = `<div class="bg-red-900/50 p-4 rounded-xl text-red-200">Akun tidak valid</div>`; return; }
+            if (!currentUser.memberId) { container.innerHTML = `<div class="bg-red-100 p-4 rounded-xl text-red-700">Akun tidak valid</div>`; return; }
             let books = await loadBooks();
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-white"><i class="fas fa-book-open text-blue-400"></i> Peminjaman Buku</h2><input id="searchBookUser" placeholder="Cari judul..." class="border p-2 rounded w-full md:w-64 mb-4 bg-white/10 border-white/20 text-white"><div id="bookListUser" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>`;
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-book-open text-pink-500"></i> Peminjaman Buku</h2><input id="searchBookUser" placeholder="Cari judul..." class="border border-pink-200 p-2 rounded w-full md:w-64 mb-4"><div id="bookListUser" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>`;
             const renderBooks = (bk) => {
-                document.getElementById("bookListUser").innerHTML = bk.map(b => `<div class="bg-white/10 backdrop-blur p-4 rounded-2xl shadow text-center"><div class="text-5xl mb-2">${b.cover || '📖'}</div><h3 class="font-bold text-lg">${b.title}</h3><p class="text-sm text-gray-300">${b.publisher}</p><p class="text-sm mt-1">Tersedia: ${b.availableStock}</p>${b.availableStock > 0 ? `<button data-id="${b.id}" class="borrowUserBtn mt-3 w-full bg-blue-600 text-white py-2 rounded-xl">Pinjam</button>` : '<button disabled class="mt-3 w-full bg-gray-600 py-2 rounded-xl">Stok Habis</button>'}</div>`).join('');
+                document.getElementById("bookListUser").innerHTML = bk.map(b => `
+                    <div class="bg-white/80 p-4 rounded-2xl shadow text-center">
+                        <div class="text-5xl mb-2">${b.cover || '📖'}</div>
+                        <h3 class="font-bold text-lg">${b.title}</h3>
+                        <p class="text-sm">${b.publisher}</p>
+                        <p class="text-sm mt-1">Tersedia: ${b.availableStock}</p>
+                        ${b.availableStock > 0 ? `<button data-id="${b.id}" class="borrowUserBtn mt-3 w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-xl">Pinjam</button>` : '<button disabled class="mt-3 w-full bg-gray-300 py-2 rounded-xl">Stok Habis</button>'}
+                    </div>
+                `).join('');
                 document.querySelectorAll(".borrowUserBtn").forEach(btn => btn.onclick = () => userBorrowBook(btn.dataset.id));
             };
             renderBooks(books);
@@ -545,14 +537,14 @@
             if (!currentUser.memberId) return;
             let all = await loadLoans();
             const myLoans = all.filter(l => l.memberId === currentUser.memberId);
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-white">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/5 rounded-xl"><thead class="bg-white/10"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td>${l.bookTitle}</td><td>${formatDate(l.loanDate)}</td><td>${formatDate(l.dueDate)}</td><td>${status}</td></tr>`; }).join('')}</tbody></table></div>`;
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`; }).join('')}</tbody></table></div>`;
         }
 
         async function renderUserReturn(container) {
             if (!currentUser.memberId) return;
             let all = await loadLoans();
             const active = all.filter(l => l.memberId === currentUser.memberId && l.status === "borrowed");
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-white">Kembalikan Buku</h2><div class="grid gap-3">${active.length === 0 ? '<div class="bg-white/10 p-4 rounded-xl text-center">Tidak ada buku yang dipinjam</div>' : active.map(l => `<div class="bg-white/10 p-4 rounded-xl flex justify-between items-center"><div><div class="text-2xl inline-block mr-2">${l.bookCover || '📖'}</div><b>${l.bookTitle}</b><br><small>Jatuh tempo: ${formatDate(l.dueDate)}</small></div><button data-id="${l.id}" class="returnUserBtn bg-orange-600 text-white px-4 py-2 rounded-xl">Kembalikan</button></div>`).join('')}</div>`;
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Kembalikan Buku</h2><div class="grid gap-3">${active.length === 0 ? '<div class="bg-white/50 p-4 rounded-xl">Tidak ada buku yang dipinjam</div>' : active.map(l => `<div class="bg-white/80 p-4 rounded-xl flex justify-between items-center"><div><div class="text-2xl inline-block mr-2">${l.bookCover || '📖'}</div><b>${l.bookTitle}</b><br><small>Jatuh tempo: ${formatDate(l.dueDate)}</small></div><button data-id="${l.id}" class="returnUserBtn bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl">Kembalikan</button></div>`).join('')}</div>`;
             document.querySelectorAll(".returnUserBtn").forEach(btn => btn.onclick = async () => {
                 const loanId = btn.dataset.id;
                 const loanRef = doc(loansCol, loanId);
@@ -571,8 +563,8 @@
         // Event listeners
         document.getElementById("doLoginBtn").onclick = () => handleLogin(document.getElementById("loginUsername").value, document.getElementById("loginPassword").value);
         document.getElementById("doRegisterBtn").onclick = () => handleRegister(document.getElementById("regName").value, document.getElementById("regClass").value, document.getElementById("regPhone").value, document.getElementById("regUsername").value, document.getElementById("regPassword").value);
-        document.getElementById("loginTabBtn").onclick = () => { document.getElementById("loginForm").classList.remove("hidden"); document.getElementById("registerForm").classList.add("hidden"); document.getElementById("loginTabBtn").classList.add("bg-white/20","text-white"); document.getElementById("registerTabBtn").classList.remove("bg-white/20","text-white"); };
-        document.getElementById("registerTabBtn").onclick = () => { document.getElementById("registerForm").classList.remove("hidden"); document.getElementById("loginForm").classList.add("hidden"); document.getElementById("registerTabBtn").classList.add("bg-white/20","text-white"); document.getElementById("loginTabBtn").classList.remove("bg-white/20","text-white"); };
+        document.getElementById("loginTabBtn").onclick = () => { document.getElementById("loginForm").classList.remove("hidden"); document.getElementById("registerForm").classList.add("hidden"); document.getElementById("loginTabBtn").classList.add("bg-white","text-pink-600"); document.getElementById("registerTabBtn").classList.remove("bg-white","text-pink-600"); };
+        document.getElementById("registerTabBtn").onclick = () => { document.getElementById("registerForm").classList.remove("hidden"); document.getElementById("loginForm").classList.add("hidden"); document.getElementById("registerTabBtn").classList.add("bg-white","text-pink-600"); document.getElementById("loginTabBtn").classList.remove("bg-white","text-pink-600"); };
         document.getElementById("logoutBtn").onclick = () => { localStorage.removeItem("perpustakaan_user"); currentUser = null; document.getElementById("authSection").classList.remove("hidden"); document.getElementById("dashboardSection").classList.add("hidden"); };
         const saved = localStorage.getItem("perpustakaan_user");
         if (saved) { currentUser = JSON.parse(saved); renderDashboard(); } else { document.getElementById("authSection").classList.remove("hidden"); document.getElementById("dashboardSection").classList.add("hidden"); }
