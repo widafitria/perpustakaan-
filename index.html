@@ -110,7 +110,7 @@
     <!-- Footer -->
     <footer class="relative z-10 text-center py-4 text-pink-700 text-sm border-t border-pink-200 bg-white/30 backdrop-blur-sm mt-4">
         <div class="container mx-auto px-4">
-            <i class="fas fa-book-open mr-1"></i> Perpustakaan SMK Insan Cemerlang © 2026 <i class="fas fa-heart text-red-400"></i> 
+            <i class="fas fa-book-open mr-1"></i> Perpustakaan SMK Insan Cemerlang © 2026<i class="fas fa-heart text-red-400"></i>
         </div>
     </footer>
 
@@ -275,6 +275,7 @@
                     btn.onclick = () => renderAdminContent(menu.id);
                     navTabs.appendChild(btn);
                 });
+                // Tampilkan halaman buku pertama kali
                 renderAdminContent("adminBooks");
             } else {
                 const menus = [
@@ -302,6 +303,7 @@
             else if (section === "adminReturns") await renderAdminReturns(container);
         }
 
+        // Buku
         async function renderAdminBooks(container) {
             let books = await loadBooks();
             container.innerHTML = `
@@ -372,11 +374,12 @@
             };
         }
 
+        // Anggota (PASTIKAN MUNCUL)
         async function renderAdminMembers(container) {
             let members = await loadMembers();
             container.innerHTML = `
                 <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-users text-pink-500"></i> Manajemen Anggota</h2><button id="addMemberBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-user-plus"></i> Tambah Anggota</button></div>
-                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tanggal Daftar</th><th>Aksi</th></table></thead><tbody id="membersTableBody"></tbody></table></div>
+                <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tanggal Daftar</th><th>Aksi</th></tr></thead><tbody id="membersTableBody"></tbody></table></div>
             `;
             const renderTable = () => {
                 document.getElementById("membersTableBody").innerHTML = members.map(m => `
@@ -436,7 +439,7 @@
             };
         }
 
-        // Peminjaman (Admin) dengan tombol warna pink yang berbeda
+        // Peminjaman (Admin)
         async function renderAdminLoans(container) {
             let loans = await loadLoans();
             const books = await loadBooks();
@@ -524,7 +527,7 @@
             };
         }
 
-        // Data Pengembalian (Admin) - denda Rp0 berwarna pink, bukan hijau
+        // Pengembalian (Admin)
         async function renderAdminReturns(container) {
             let returns = await loadReturns();
             container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-undo-alt text-pink-500"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th></tr></thead><tbody>${returns.map(r => {
@@ -532,7 +535,7 @@
                 const loanDateFormatted = formatDate(r.loanDate);
                 const returnDateFormatted = formatDate(r.returnDate);
                 const fineFormatted = `Rp${(r.lateFee || 0).toLocaleString()}`;
-                const fineColor = (r.lateFee > 0) ? 'text-red-600 font-semibold' : 'text-pink-500';  // Rp0 jadi pink
+                const fineColor = (r.lateFee > 0) ? 'text-red-600 font-semibold' : 'text-pink-500';
                 return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${loanDateFormatted}</td><td class="font-medium">${dueDateFormatted}</td><td class="font-medium">${returnDateFormatted}</td><td class="font-medium ${fineColor}">${fineFormatted}</td></tr>`;
             }).join('')}</tbody></table></div>`;
         }
