@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Perpustakaan Digital | UKK 2025/2026</title>
+    <title>Perpustakaan Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -53,6 +53,7 @@
             color: #e91e63;
         }
         .relative-field { position: relative; }
+        .password-toggle-inline { cursor: pointer; margin-left: 8px; color: #e91e63; }
     </style>
     <script type="importmap">
         {
@@ -89,7 +90,7 @@
                     </div>
                     <div class="mb-4 relative-field">
                         <input type="password" id="loginPassword" placeholder="Password" class="w-full p-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-pink-400 pr-10">
-                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
+                        <i class="fas fa-eye-slash password-toggle" id="toggleLoginPassword"></i>
                     </div>
                     <button id="doLoginBtn" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg">Masuk</button>
                 </div>
@@ -100,11 +101,10 @@
                     <input type="text" id="regUsername" placeholder="Username" class="w-full mb-2 p-2 border border-pink-200 rounded">
                     <div class="relative-field mb-3">
                         <input type="password" id="regPassword" placeholder="Password" class="w-full p-2 border border-pink-200 rounded pr-8">
-                        <i class="fas fa-eye password-toggle" id="toggleRegPassword"></i>
+                        <i class="fas fa-eye-slash password-toggle" id="toggleRegPassword"></i>
                     </div>
                     <button id="doRegisterBtn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-bold">Daftar</button>
                 </div>
-                <p class="text-xs text-center text-pink-500 mt-6">Demo: admin/admin123 | atau daftar sebagai anggota</p>
             </div>
         </div>
 
@@ -114,7 +114,7 @@
                 <div class="flex items-center gap-3">
                     <i class="fas fa-landmark text-3xl text-pink-700"></i>
                     <div>
-                        <h1 class="text-2xl font-bold text-pink-800">Perpustakaan Digital</h1>
+                        <h1 class="text-2xl font-bold text-pink-800">Perpustakaan Incher</h1>
                         <p class="text-pink-700">Halo, <span id="userNameDisplay"></span> · <span id="userRoleBadge" class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-sm"></span></p>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
     <!-- Footer -->
     <footer class="relative z-10 text-center py-4 text-pink-700 text-sm border-t border-pink-200 bg-white/30 backdrop-blur-sm mt-4">
         <div class="container mx-auto px-4">
-            <i class="fas fa-book-open mr-1"></i> Perpustakaan Digital SMK Insan Cemerlang © 2025 | Dibangun dengan <i class="fas fa-heart text-red-400"></i> untuk UKK RPL
+            <i class="fas fa-book-open mr-1"></i> Perpustakaan SMK Insan Cemerlang © 2026 <i class="fas fa-heart text-red-400"></i> 
         </div>
     </footer>
 
@@ -210,15 +210,25 @@
         }
         seedInitialData().catch(console.error);
 
-        // Fungsi toggle password (mata)
+        // Fungsi toggle password yang benar: mata terbuka (fa-eye) = password terlihat, mata tertutup (fa-eye-slash) = password tersembunyi
         function setupPasswordToggle(toggleId, inputId) {
             const toggle = document.getElementById(toggleId);
             const input = document.getElementById(inputId);
             if (toggle && input) {
+                // Set icon awal: mata tertutup (password tersembunyi)
+                toggle.classList.remove('fa-eye', 'fa-eye-slash');
+                toggle.classList.add('fa-eye-slash');
                 toggle.addEventListener('click', () => {
-                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                    input.setAttribute('type', type);
-                    toggle.classList.toggle('fa-eye-slash');
+                    const type = input.getAttribute('type');
+                    if (type === 'password') {
+                        input.setAttribute('type', 'text');
+                        toggle.classList.remove('fa-eye-slash');
+                        toggle.classList.add('fa-eye');
+                    } else {
+                        input.setAttribute('type', 'password');
+                        toggle.classList.remove('fa-eye');
+                        toggle.classList.add('fa-eye-slash');
+                    }
                 });
             }
         }
@@ -280,6 +290,27 @@
             document.getElementById("modalBody").innerHTML = bodyHtml;
             document.getElementById("modalForm").classList.remove("hidden");
             modalCallback = onConfirm;
+            // Setup toggle untuk field password di modal (jika ada)
+            setTimeout(() => {
+                const modalPwdToggle = document.querySelector('#modalForm .password-toggle');
+                const modalPwdInput = document.querySelector('#modalForm input[type="password"]');
+                if (modalPwdToggle && modalPwdInput) {
+                    modalPwdToggle.classList.remove('fa-eye', 'fa-eye-slash');
+                    modalPwdToggle.classList.add('fa-eye-slash');
+                    modalPwdToggle.addEventListener('click', () => {
+                        const type = modalPwdInput.getAttribute('type');
+                        if (type === 'password') {
+                            modalPwdInput.setAttribute('type', 'text');
+                            modalPwdToggle.classList.remove('fa-eye-slash');
+                            modalPwdToggle.classList.add('fa-eye');
+                        } else {
+                            modalPwdInput.setAttribute('type', 'password');
+                            modalPwdToggle.classList.remove('fa-eye');
+                            modalPwdToggle.classList.add('fa-eye-slash');
+                        }
+                    });
+                }
+            }, 100);
         }
         function closeModal() { document.getElementById("modalForm").classList.add("hidden"); modalCallback = null; }
         document.getElementById("closeModalBtn").onclick = closeModal;
@@ -334,7 +365,6 @@
             else if (section === "adminReturns") await renderAdminReturns(container);
         }
 
-        // Buku (sama seperti sebelumnya)
         async function renderAdminBooks(container) {
             let books = await loadBooks();
             container.innerHTML = `
@@ -405,11 +435,10 @@
             };
         }
 
-        // Manajemen Anggota dengan username & password + toggle mata
+        // Manajemen Anggota dengan username & password + toggle mata yang benar (mata terbuka = lihat)
         async function renderAdminMembers(container) {
             let members = await loadMembers();
             let users = await loadAllUsers();
-            // Buat map memberId -> user
             const userMap = new Map();
             users.forEach(user => {
                 if (user.memberId) userMap.set(user.memberId, user);
@@ -423,7 +452,6 @@
                     const user = userMap.get(m.id);
                     const username = user ? user.username : '-';
                     const password = user ? user.password : '-';
-                    // Untuk toggle password per baris, kita beri id unik
                     const rowId = `row-${m.id}`;
                     return `
                         <tr id="${rowId}">
@@ -434,7 +462,7 @@
                             <td class="font-medium">${username}</td>
                             <td class="font-medium relative-field">
                                 <span class="password-display" data-pwd="${password}">••••••</span>
-                                <i class="fas fa-eye password-toggle-inline cursor-pointer text-pink-500 ml-2" data-row="${rowId}"></i>
+                                <i class="fas fa-eye-slash password-toggle-inline" data-row="${rowId}"></i>
                             </td>
                             <td class="font-medium">
                                 <button data-id="${m.id}" class="editMemberBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button>
@@ -443,7 +471,7 @@
                         </tr>
                     `;
                 }).join('');
-                // Pasang event toggle untuk setiap mata
+                // Pasang event toggle untuk inline (mata tertutup = tersembunyi, terbuka = terlihat)
                 document.querySelectorAll('.password-toggle-inline').forEach(icon => {
                     icon.addEventListener('click', (e) => {
                         const rowId = icon.getAttribute('data-row');
@@ -453,12 +481,12 @@
                         const realPwd = span.getAttribute('data-pwd');
                         if (currentText === '••••••') {
                             span.innerText = realPwd;
-                            icon.classList.remove('fa-eye');
-                            icon.classList.add('fa-eye-slash');
-                        } else {
-                            span.innerText = '••••••';
                             icon.classList.remove('fa-eye-slash');
                             icon.classList.add('fa-eye');
+                        } else {
+                            span.innerText = '••••••';
+                            icon.classList.remove('fa-eye');
+                            icon.classList.add('fa-eye-slash');
                         }
                     });
                 });
@@ -472,7 +500,7 @@
                     <div class="mb-3"><label>Kelas</label><input id="memberClass" class="w-full border rounded p-2"></div>
                     <div class="mb-3"><label>Telepon</label><input id="memberPhone" class="w-full border rounded p-2"></div>
                     <div class="mb-3"><label>Username (untuk login)</label><input id="memberUsername" class="w-full border rounded p-2"></div>
-                    <div class="mb-3 relative-field"><label>Password</label><input id="memberPassword" type="password" class="w-full border rounded p-2 pr-8"><i class="fas fa-eye password-toggle absolute right-3 top-9 cursor-pointer text-pink-500"></i></div>
+                    <div class="mb-3 relative-field"><label>Password</label><input id="memberPassword" type="password" class="w-full border rounded p-2 pr-8"><i class="fas fa-eye-slash password-toggle absolute right-3 top-9 cursor-pointer text-pink-500"></i></div>
                 `, async () => {
                     const name = document.getElementById("memberName").value;
                     const className = document.getElementById("memberClass").value;
@@ -490,16 +518,6 @@
                     userMap.clear();
                     users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
                     renderTable();
-                    // Setup toggle untuk modal (tambahan)
-                    const toggleEye = document.querySelector('#modalForm .password-toggle');
-                    if (toggleEye) {
-                        const pwdInput = document.getElementById("memberPassword");
-                        toggleEye.addEventListener('click', () => {
-                            const type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                            pwdInput.setAttribute('type', type);
-                            toggleEye.classList.toggle('fa-eye-slash');
-                        });
-                    }
                 });
             };
             window.editMember = async (id) => {
@@ -518,7 +536,7 @@
                     <div class="mb-3"><label>Kelas</label><input id="memberClass" class="w-full border rounded p-2" value="${data.className}"></div>
                     <div class="mb-3"><label>Telepon</label><input id="memberPhone" class="w-full border rounded p-2" value="${data.phone}"></div>
                     <div class="mb-3"><label>Username</label><input id="memberUsername" class="w-full border rounded p-2" value="${username}"></div>
-                    <div class="mb-3 relative-field"><label>Password</label><input id="memberPassword" type="password" class="w-full border rounded p-2 pr-8" value="${password}"><i class="fas fa-eye password-toggle absolute right-3 top-9 cursor-pointer text-pink-500"></i></div>
+                    <div class="mb-3 relative-field"><label>Password</label><input id="memberPassword" type="password" class="w-full border rounded p-2 pr-8" value="${password}"><i class="fas fa-eye-slash password-toggle absolute right-3 top-9 cursor-pointer text-pink-500"></i></div>
                 `, async () => {
                     const newName = document.getElementById("memberName").value;
                     const newClass = document.getElementById("memberClass").value;
@@ -538,19 +556,9 @@
                     users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
                     renderTable();
                 });
-                const toggleEye = document.querySelector('#modalForm .password-toggle');
-                if (toggleEye) {
-                    const pwdInput = document.getElementById("memberPassword");
-                    toggleEye.addEventListener('click', () => {
-                        const type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                        pwdInput.setAttribute('type', type);
-                        toggleEye.classList.toggle('fa-eye-slash');
-                    });
-                }
             };
             window.deleteMember = async (id) => { 
                 if (confirm("Hapus anggota?")) { 
-                    // Hapus juga user yang terkait
                     const userQuery = query(usersCol, where("memberId", "==", id));
                     const userSnap = await getDocs(userQuery);
                     if (!userSnap.empty) await deleteDoc(doc(usersCol, userSnap.docs[0].id));
@@ -565,7 +573,7 @@
             };
         }
 
-        // Peminjaman (Admin) - tidak berubah
+        // Peminjaman (Admin)
         async function renderAdminLoans(container) {
             let loans = await loadLoans();
             const books = await loadBooks();
@@ -653,7 +661,6 @@
             };
         }
 
-        // Pengembalian (Admin)
         async function renderAdminReturns(container) {
             let returns = await loadReturns();
             container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-undo-alt text-pink-500"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th></tr></thead><tbody>${returns.map(r => {
@@ -663,7 +670,7 @@
                 const fineFormatted = `Rp${(r.lateFee || 0).toLocaleString()}`;
                 const fineColor = (r.lateFee > 0) ? 'text-red-600 font-semibold' : 'text-pink-500';
                 return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${loanDateFormatted}</td><td class="font-medium">${dueDateFormatted}</td><td class="font-medium">${returnDateFormatted}</td><td class="font-medium ${fineColor}">${fineFormatted}</td></tr>`;
-            }).join('')}</tbody></td></div>`;
+            }).join('')}</tbody></table></div>`;
         }
 
         // ==================== USER ====================
@@ -711,7 +718,7 @@
             if (!currentUser.memberId) return;
             let all = await loadLoans();
             const myLoans = all.filter(l => l.memberId === currentUser.memberId);
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`; }).join('')}</tbody></td></div>`;
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th><tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<tr><td class="text-2xl">${l.bookCover || '📖'}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`; }).join('')}</tbody></table></div>`;
         }
 
         async function renderUserReturn(container) {
@@ -741,7 +748,7 @@
             });
         }
 
-        // Setup toggle password login & register
+        // Setup toggle untuk login & register
         setupPasswordToggle('toggleLoginPassword', 'loginPassword');
         setupPasswordToggle('toggleRegPassword', 'regPassword');
 
