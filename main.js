@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, getDocs, getDoc, addDoc, deleteDoc, updateDoc, query, orderBy, where } from 'firebase/firestore';
 
-// Konfigurasi Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDmI0zRauvzaL4oEuXinkmXhGiwTsYxYQc",
     authDomain: "insan-cemerlang-ee7af.firebaseapp.com",
@@ -24,7 +23,6 @@ let currentUser = null;
 let modalCallback = null;
 const DAILY_FINE = 1000;
 
-// Helper functions
 function showToast(msg, type = "success") {
     const toast = document.createElement("div");
     toast.className = `fixed bottom-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-white font-medium flex items-center gap-2 ${type === 'error' ? 'bg-red-500' : 'bg-pink-500'}`;
@@ -33,21 +31,9 @@ function showToast(msg, type = "success") {
     setTimeout(() => toast.remove(), 3000);
 }
 
-function formatDate(dateObj) {
-    if (!dateObj) return '-';
-    return new Date(dateObj).toLocaleDateString('id-ID');
-}
-
-function getDueDate(loanDate) {
-    const due = new Date(loanDate);
-    due.setDate(due.getDate() + 7);
-    return due.toISOString();
-}
-
-function isOverdue(dueDate) {
-    return new Date() > new Date(dueDate);
-}
-
+function formatDate(dateObj) { if (!dateObj) return '-'; return new Date(dateObj).toLocaleDateString('id-ID'); }
+function getDueDate(loanDate) { const due = new Date(loanDate); due.setDate(due.getDate() + 7); return due.toISOString(); }
+function isOverdue(dueDate) { return new Date() > new Date(dueDate); }
 function calculateLateFee(dueDateStr, returnDateStr) {
     const due = new Date(dueDateStr);
     const ret = new Date(returnDateStr);
@@ -56,40 +42,15 @@ function calculateLateFee(dueDateStr, returnDateStr) {
     return diffDays * DAILY_FINE;
 }
 
-// Cache management
-let cachedBooks = [];
-let cachedMembers = [];
-let cachedUsers = [];
-let lastFetchTime = 0;
+// Cache data
+let cachedBooks = [], cachedMembers = [], cachedUsers = [], lastFetchTime = 0;
 const CACHE_TTL = 30000;
-
-async function loadBooksForce() {
-    const snap = await getDocs(query(booksCol, orderBy("title")));
-    cachedBooks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    return cachedBooks;
-}
-async function loadMembersForce() {
-    const snap = await getDocs(query(membersCol, orderBy("name")));
-    cachedMembers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    return cachedMembers;
-}
-async function loadUsersForce() {
-    const snap = await getDocs(usersCol);
-    cachedUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    return cachedUsers;
-}
-async function loadBooks() {
-    if (cachedBooks.length === 0 || Date.now() - lastFetchTime > CACHE_TTL) await loadBooksForce();
-    return cachedBooks;
-}
-async function loadMembers() {
-    if (cachedMembers.length === 0 || Date.now() - lastFetchTime > CACHE_TTL) await loadMembersForce();
-    return cachedMembers;
-}
-async function loadAllUsers() {
-    if (cachedUsers.length === 0 || Date.now() - lastFetchTime > CACHE_TTL) await loadUsersForce();
-    return cachedUsers;
-}
+async function loadBooksForce() { const snap = await getDocs(query(booksCol, orderBy("title"))); cachedBooks = snap.docs.map(d => ({ id: d.id, ...d.data() })); return cachedBooks; }
+async function loadMembersForce() { const snap = await getDocs(query(membersCol, orderBy("name"))); cachedMembers = snap.docs.map(d => ({ id: d.id, ...d.data() })); return cachedMembers; }
+async function loadUsersForce() { const snap = await getDocs(usersCol); cachedUsers = snap.docs.map(d => ({ id: d.id, ...d.data() })); return cachedUsers; }
+async function loadBooks() { if (cachedBooks.length === 0 || Date.now() - lastFetchTime > CACHE_TTL) await loadBooksForce(); return cachedBooks; }
+async function loadMembers() { if (cachedMembers.length === 0 || Date.now() - lastFetchTime > CACHE_TTL) await loadMembersForce(); return cachedMembers; }
+async function loadAllUsers() { if (cachedUsers.length === 0 || Date.now() - lastFetchTime > CACHE_TTL) await loadUsersForce(); return cachedUsers; }
 
 async function loadLoans() {
     const loansSnap = await getDocs(query(loansCol, orderBy("loanDate", "desc")));
@@ -98,18 +59,8 @@ async function loadLoans() {
     const bookIds = [...new Set(loans.map(l => l.bookId).filter(Boolean))];
     const memberIds = [...new Set(loans.map(l => l.memberId).filter(Boolean))];
     const [booksMap, membersMap] = await Promise.all([
-        (async () => {
-            const map = new Map();
-            const snap = await Promise.all(bookIds.map(id => getDoc(doc(booksCol, id))));
-            snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); });
-            return map;
-        })(),
-        (async () => {
-            const map = new Map();
-            const snap = await Promise.all(memberIds.map(id => getDoc(doc(membersCol, id))));
-            snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); });
-            return map;
-        })()
+        (async () => { const map = new Map(); if (bookIds.length) { const snap = await Promise.all(bookIds.map(id => getDoc(doc(booksCol, id)))); snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); }); } return map; })(),
+        (async () => { const map = new Map(); if (memberIds.length) { const snap = await Promise.all(memberIds.map(id => getDoc(doc(membersCol, id)))); snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); }); } return map; })()
     ]);
     return loans.map(loan => ({
         ...loan,
@@ -125,23 +76,12 @@ async function loadReturns() {
     if (returns.length === 0) return [];
     const loanIds = [...new Set(returns.map(r => r.loanId))];
     const loansMap = new Map();
-    const loanDocs = await Promise.all(loanIds.map(id => getDoc(doc(loansCol, id))));
-    loanDocs.forEach(ds => { if (ds.exists()) loansMap.set(ds.id, ds.data()); });
+    if (loanIds.length) { const loanDocs = await Promise.all(loanIds.map(id => getDoc(doc(loansCol, id)))); loanDocs.forEach(ds => { if (ds.exists()) loansMap.set(ds.id, ds.data()); }); }
     const bookIds = [...new Set([...loansMap.values()].map(loan => loan.bookId))];
     const memberIds = [...new Set([...loansMap.values()].map(loan => loan.memberId))];
     const [booksMap, membersMap] = await Promise.all([
-        (async () => {
-            const map = new Map();
-            const snap = await Promise.all(bookIds.map(id => getDoc(doc(booksCol, id))));
-            snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); });
-            return map;
-        })(),
-        (async () => {
-            const map = new Map();
-            const snap = await Promise.all(memberIds.map(id => getDoc(doc(membersCol, id))));
-            snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); });
-            return map;
-        })()
+        (async () => { const map = new Map(); if (bookIds.length) { const snap = await Promise.all(bookIds.map(id => getDoc(doc(booksCol, id)))); snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); }); } return map; })(),
+        (async () => { const map = new Map(); if (memberIds.length) { const snap = await Promise.all(memberIds.map(id => getDoc(doc(membersCol, id)))); snap.forEach(ds => { if (ds.exists()) map.set(ds.id, ds.data()); }); } return map; })()
     ]);
     return returns.map(ret => {
         const loan = loansMap.get(ret.loanId);
@@ -156,13 +96,10 @@ async function loadReturns() {
     });
 }
 
-// Seed data awal
 async function seedInitialData() {
     try {
         const adminQuery = query(usersCol, where("username", "==", "admin"));
-        if ((await getDocs(adminQuery)).empty) {
-            await addDoc(usersCol, { username: "admin", password: "admin123", role: "admin", memberId: null });
-        }
+        if ((await getDocs(adminQuery)).empty) await addDoc(usersCol, { username: "admin", password: "admin123", role: "admin", memberId: null });
         if ((await getDocs(booksCol)).empty) {
             await addDoc(booksCol, { title: "Pemrograman Web Modern", publisher: "Gramedia", totalStock: 5, availableStock: 5, cover: "📘" });
             await addDoc(booksCol, { title: "Database Sistem", publisher: "Informatika", totalStock: 3, availableStock: 3, cover: "📗" });
@@ -178,7 +115,6 @@ async function seedInitialData() {
 }
 seedInitialData();
 
-// Toggle password visibility
 function setupPasswordToggle(toggleId, inputId) {
     const toggle = document.getElementById(toggleId);
     const input = document.getElementById(inputId);
@@ -186,20 +122,12 @@ function setupPasswordToggle(toggleId, inputId) {
         toggle.classList.add('fa-eye-slash');
         toggle.addEventListener('click', () => {
             const type = input.getAttribute('type');
-            if (type === 'password') {
-                input.setAttribute('type', 'text');
-                toggle.classList.remove('fa-eye-slash');
-                toggle.classList.add('fa-eye');
-            } else {
-                input.setAttribute('type', 'password');
-                toggle.classList.remove('fa-eye');
-                toggle.classList.add('fa-eye-slash');
-            }
+            if (type === 'password') { input.setAttribute('type', 'text'); toggle.classList.remove('fa-eye-slash'); toggle.classList.add('fa-eye'); }
+            else { input.setAttribute('type', 'password'); toggle.classList.remove('fa-eye'); toggle.classList.add('fa-eye-slash'); }
         });
     }
 }
 
-// Login & Register
 async function handleLogin(username, password) {
     if (!username || !password) { showToast("Isi username dan password", "error"); return false; }
     try {
@@ -226,7 +154,6 @@ async function handleRegister(name, className, phone, username, password) {
     } catch(e) { showToast("Gagal registrasi", "error"); return false; }
 }
 
-// Modal
 function openModal(title, bodyHtml, onConfirm) {
     document.getElementById("modalTitle").innerText = title;
     document.getElementById("modalBody").innerHTML = bodyHtml;
@@ -239,25 +166,17 @@ function openModal(title, bodyHtml, onConfirm) {
             modalPwdToggle.classList.add('fa-eye-slash');
             modalPwdToggle.addEventListener('click', () => {
                 const type = input.getAttribute('type');
-                if (type === 'password') {
-                    input.setAttribute('type', 'text');
-                    modalPwdToggle.classList.remove('fa-eye-slash');
-                    modalPwdToggle.classList.add('fa-eye');
-                } else {
-                    input.setAttribute('type', 'password');
-                    modalPwdToggle.classList.remove('fa-eye');
-                    modalPwdToggle.classList.add('fa-eye-slash');
-                }
+                if (type === 'password') { input.setAttribute('type', 'text'); modalPwdToggle.classList.remove('fa-eye-slash'); modalPwdToggle.classList.add('fa-eye'); }
+                else { input.setAttribute('type', 'password'); modalPwdToggle.classList.remove('fa-eye'); modalPwdToggle.classList.add('fa-eye-slash'); }
             });
         }
     }, 100);
 }
-function closeModal() {
-    document.getElementById("modalForm").classList.add("hidden");
-    modalCallback = null;
-}
+function closeModal() { document.getElementById("modalForm").classList.add("hidden"); modalCallback = null; }
+document.getElementById("closeModalBtn").onclick = closeModal;
+document.getElementById("modalCancelBtn").onclick = closeModal;
+document.getElementById("modalConfirmBtn").onclick = () => { if (modalCallback) modalCallback(); closeModal(); };
 
-// Render Dashboard utama
 async function renderDashboard() {
     document.getElementById("authSection").classList.add("hidden");
     document.getElementById("dashboardSection").classList.remove("hidden");
@@ -285,8 +204,7 @@ async function renderDashboard() {
         const menus = [
             { id: "userBorrow", label: "📖 Pinjam Buku", icon: "fa-hand-holding-heart" },
             { id: "userLoans", label: "📌 Peminjaman Saya", icon: "fa-list" },
-            { id: "userReturn", label: "🔄 Kembalikan Buku", icon: "fa-undo" },
-            { id: "userFines", label: "💰 Denda Saya", icon: "fa-coins" }
+            { id: "userReturn", label: "🔄 Kembalikan Buku", icon: "fa-undo" }
         ];
         menus.forEach(menu => {
             const btn = document.createElement("button");
@@ -299,7 +217,7 @@ async function renderDashboard() {
     }
 }
 
-// ==================== ADMIN ====================
+// ========== ADMIN ==========
 async function renderAdminContent(section) {
     const container = document.getElementById("contentPanel");
     if (section === "adminBooks") await renderAdminBooks(container);
@@ -309,15 +227,64 @@ async function renderAdminContent(section) {
     else if (section === "adminFines") await renderAdminFines(container);
 }
 
+// Buku dengan pencarian
 async function renderAdminBooks(container) {
-    let books = await loadBooksForce();
-    container.innerHTML = `<div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-book text-pink-500"></i> Manajemen Buku</h2><button id="addBookBtn" class="bg-pink-500 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-plus"></i> Tambah Buku</button></div><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Judul</th><th>Penerbit</th><th>Stok Total</th><th>Stok Tersedia</th><th>Aksi</th></tr></thead><tbody id="booksTableBody"></tbody></table></div>`;
-    const renderTable = () => {
-        document.getElementById("booksTableBody").innerHTML = books.map(b => `<tr><td class="text-3xl text-center">${b.cover || '📖'}</td><td class="font-medium">${b.title}</td><td class="font-medium">${b.publisher || '-'}</td><td class="font-medium">${b.totalStock}</td><td class="font-medium">${b.availableStock}</td><td class="font-medium"><button data-id="${b.id}" class="editBookBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${b.id}" class="deleteBookBtn text-red-500"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+    let allBooks = await loadBooksForce();
+    let filteredBooks = [...allBooks];
+    
+    container.innerHTML = `
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-book text-pink-500"></i> Manajemen Buku</h2>
+            <button id="addBookBtn" class="bg-pink-500 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-plus"></i> Tambah Buku</button>
+        </div>
+        <div class="mb-4">
+            <input type="text" id="searchBookInput" placeholder="Cari judul atau penerbit..." class="w-full md:w-80 px-4 py-2 border border-pink-200 rounded-xl focus:ring-2 focus:ring-pink-400">
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full table-modern bg-white/70 rounded-xl">
+                <thead class="bg-pink-50">
+                    <tr><th>Cover</th><th>Judul</th><th>Penerbit</th><th>Stok Total</th><th>Stok Tersedia</th><th>Aksi</th></tr>
+                </thead>
+                <tbody id="booksTableBody"></tbody>
+            </table>
+        </div>
+    `;
+    
+    const renderTable = (books) => {
+        document.getElementById("booksTableBody").innerHTML = books.map(b => `
+            <tr>
+                <td class="text-3xl text-center">${b.cover || '📖'}</td>
+                <td class="font-medium">${b.title}</td>
+                <td class="font-medium">${b.publisher || '-'}</td>
+                <td class="font-medium">${b.totalStock}</td>
+                <td class="font-medium">${b.availableStock}</td>
+                <td class="font-medium">
+                    <button data-id="${b.id}" class="editBookBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button>
+                    <button data-id="${b.id}" class="deleteBookBtn text-red-500"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
         document.querySelectorAll(".editBookBtn").forEach(btn => btn.onclick = () => editBook(btn.dataset.id));
         document.querySelectorAll(".deleteBookBtn").forEach(btn => btn.onclick = () => deleteBook(btn.dataset.id));
     };
-    renderTable();
+    
+    const filterBooks = (keyword) => {
+        if (!keyword.trim()) {
+            filteredBooks = [...allBooks];
+        } else {
+            const lowerKeyword = keyword.toLowerCase();
+            filteredBooks = allBooks.filter(b => 
+                b.title.toLowerCase().includes(lowerKeyword) || 
+                (b.publisher && b.publisher.toLowerCase().includes(lowerKeyword))
+            );
+        }
+        renderTable(filteredBooks);
+    };
+    
+    renderTable(allBooks);
+    const searchInput = document.getElementById("searchBookInput");
+    searchInput.addEventListener("input", (e) => filterBooks(e.target.value));
+    
     document.getElementById("addBookBtn").onclick = () => {
         openModal("Tambah Buku", `<div class="mb-3"><label>Cover (emoji)</label><input id="bookCover" class="w-full border rounded p-2" value="📚"></div><div class="mb-3"><label>Judul</label><input id="bookTitle" class="w-full border rounded p-2"></div><div class="mb-3"><label>Penerbit</label><input id="bookPublisher" class="w-full border rounded p-2"></div><div class="mb-3"><label>Stok Total</label><input id="bookStock" type="number" class="w-full border rounded p-2"></div>`, async () => {
             const cover = document.getElementById("bookCover").value;
@@ -327,10 +294,11 @@ async function renderAdminBooks(container) {
             if (!title || isNaN(totalStock)) { showToast("Data tidak lengkap", "error"); return; }
             await addDoc(booksCol, { title, publisher, totalStock, availableStock: totalStock, cover });
             showToast("Buku ditambahkan");
-            books = await loadBooksForce();
-            renderTable();
+            allBooks = await loadBooksForce();
+            filterBooks(searchInput.value);
         });
     };
+    
     window.editBook = async (id) => {
         const ref = doc(booksCol, id);
         const data = (await getDoc(ref)).data();
@@ -343,34 +311,30 @@ async function renderAdminBooks(container) {
             const diff = newTotal - data.totalStock;
             await updateDoc(ref, { cover: newCover, title: newTitle, publisher: newPub, totalStock: newTotal, availableStock: data.availableStock + diff });
             showToast("Buku diupdate");
-            books = await loadBooksForce();
-            renderTable();
+            allBooks = await loadBooksForce();
+            filterBooks(searchInput.value);
         });
     };
+    
     window.deleteBook = async (id) => {
         if (confirm("Hapus buku?")) {
             await deleteDoc(doc(booksCol, id));
             showToast("Buku dihapus");
-            books = await loadBooksForce();
-            renderTable();
+            allBooks = await loadBooksForce();
+            filterBooks(searchInput.value);
         }
     };
 }
 
+// Anggota
 async function renderAdminMembers(container) {
     let members = await loadMembersForce();
     let users = await loadUsersForce();
     let loans = await loadLoans();
     const activeLoansCount = new Map();
-    loans.forEach(loan => {
-        if (loan.status === 'borrowed') {
-            activeLoansCount.set(loan.memberId, (activeLoansCount.get(loan.memberId) || 0) + 1);
-        }
-    });
-    const userMap = new Map();
-    users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
-    container.innerHTML = `<div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-users text-pink-500"></i> Manajemen Anggota</h2><button id="addMemberBtn" class="bg-pink-500 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-user-plus"></i> Tambah Anggota</button></div>
-    <div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tgl Daftar</th><th>Username</th><th>Password</th><th>Status Peminjaman</th><th>Aksi</th></tr></thead><tbody id="membersTableBody"></tbody></table></div>`;
+    loans.forEach(loan => { if (loan.status === 'borrowed') activeLoansCount.set(loan.memberId, (activeLoansCount.get(loan.memberId) || 0) + 1); });
+    const userMap = new Map(); users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
+    container.innerHTML = `<div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-pink-700"><i class="fas fa-users text-pink-500"></i> Manajemen Anggota</h2><button id="addMemberBtn" class="bg-pink-500 text-white px-4 py-2 rounded-xl shadow"><i class="fas fa-user-plus"></i> Tambah Anggota</button></div><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Nama</th><th>Kelas</th><th>Telepon</th><th>Tgl Daftar</th><th>Username</th><th>Password</th><th>Status Peminjaman</th><th>Aksi</th></tr></thead><tbody id="membersTableBody"></tbody></table></div>`;
     const renderTable = () => {
         document.getElementById("membersTableBody").innerHTML = members.map(m => {
             const user = userMap.get(m.id);
@@ -379,31 +343,15 @@ async function renderAdminMembers(container) {
             const rowId = `row-${m.id}`;
             const activeCount = activeLoansCount.get(m.id) || 0;
             const statusBadge = activeCount > 0 ? `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">${activeCount} buku dipinjam</span>` : `<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Tidak ada pinjaman</span>`;
-            return `<tr id="${rowId}">
-                <td class="font-medium">${m.name}</td>
-                <td class="font-medium">${m.className}</td>
-                <td class="font-medium">${m.phone}</td>
-                <td class="font-medium">${formatDate(m.registerDate)}</td>
-                <td class="font-medium">${username}</td>
-                <td class="relative-field"><span class="password-display" data-pwd="${password}">••••••</span><i class="fas fa-eye-slash password-toggle-inline ml-2" data-row="${rowId}"></i></td>
-                <td class="font-medium text-center">${statusBadge}</td>
-                <td class="font-medium"><button data-id="${m.id}" class="editMemberBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${m.id}" class="deleteMemberBtn text-red-500"><i class="fas fa-trash"></i></button></td>
-             </tr>`;
+            return `<tr id="${rowId}"><td class="font-medium">${m.name}</td><td class="font-medium">${m.className}</td><td class="font-medium">${m.phone}</td><td class="font-medium">${formatDate(m.registerDate)}</td><td class="font-medium">${username}</td><td class="relative-field"><span class="password-display" data-pwd="${password}">••••••</span><i class="fas fa-eye-slash password-toggle-inline ml-2" data-row="${rowId}"></i></td><td class="font-medium text-center">${statusBadge}</td><td class="font-medium"><button data-id="${m.id}" class="editMemberBtn text-pink-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${m.id}" class="deleteMemberBtn text-red-500"><i class="fas fa-trash"></i></button></td></tr>`;
         }).join('');
         document.querySelectorAll('.password-toggle-inline').forEach(icon => {
             icon.addEventListener('click', (e) => {
                 const rowId = icon.getAttribute('data-row');
                 const row = document.getElementById(rowId);
                 const span = row.querySelector('.password-display');
-                if (span.innerText === '••••••') {
-                    span.innerText = span.getAttribute('data-pwd');
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                } else {
-                    span.innerText = '••••••';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
+                if (span.innerText === '••••••') { span.innerText = span.getAttribute('data-pwd'); icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+                else { span.innerText = '••••••'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
             });
         });
         document.querySelectorAll(".editMemberBtn").forEach(btn => btn.onclick = () => editMember(btn.dataset.id));
@@ -425,8 +373,7 @@ async function renderAdminMembers(container) {
             showToast("Anggota dan akun dibuat");
             members = await loadMembersForce();
             users = await loadUsersForce();
-            userMap.clear();
-            users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
+            userMap.clear(); users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
             renderTable();
         });
     };
@@ -449,8 +396,7 @@ async function renderAdminMembers(container) {
             showToast("Anggota diperbarui");
             members = await loadMembersForce();
             users = await loadUsersForce();
-            userMap.clear();
-            users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
+            userMap.clear(); users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
             renderTable();
         });
     };
@@ -463,8 +409,7 @@ async function renderAdminMembers(container) {
             showToast("Anggota dihapus");
             members = await loadMembersForce();
             users = await loadUsersForce();
-            userMap.clear();
-            users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
+            userMap.clear(); users.forEach(u => { if (u.memberId) userMap.set(u.memberId, u); });
             renderTable();
         }
     };
@@ -525,12 +470,12 @@ async function renderAdminLoans(container) {
         const loanData = loan.data();
         const returnDate = new Date().toISOString();
         const lateFee = calculateLateFee(loanData.dueDate, returnDate);
-        await addDoc(returnsCol, { loanId, returnDate, lateFee, finePaid: false, paymentProof: null });
+        await addDoc(returnsCol, { loanId, returnDate, lateFee, finePaid: true });
         await updateDoc(loanRef, { status: "returned", returnDate });
         const bookRef = doc(booksCol, loanData.bookId);
         const bookSnap = await getDoc(bookRef);
         if (bookSnap.exists()) await updateDoc(bookRef, { availableStock: bookSnap.data().availableStock + 1 });
-        if (lateFee > 0) showToast(`Buku dikembalikan. Denda Rp${lateFee.toLocaleString()}. Bayar di menu Denda Saya.`);
+        if (lateFee > 0) showToast(`Buku dikembalikan (terlambat ${Math.ceil(lateFee/1000)} hari). Denda otomatis lunas.`);
         else showToast("Pengembalian berhasil (tepat waktu)");
         loans = await loadLoans();
         renderTable();
@@ -558,21 +503,17 @@ async function renderAdminLoans(container) {
 
 async function renderAdminReturns(container) {
     let returns = await loadReturns();
-    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-undo-alt text-pink-500"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th><th>Status Bayar</th></tr></thead><tbody>${returns.map(r => {
-        const fineColor = r.lateFee > 0 ? 'text-red-600' : 'text-pink-500';
-        const paidStatus = r.finePaid ? 'Lunas' : (r.lateFee > 0 ? 'Belum Lunas' : '-');
-        return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${formatDate(r.loanDate)}</td><td class="font-medium">${formatDate(r.dueDate)}</td><td class="font-medium">${formatDate(r.returnDate)}</td><td class="${fineColor}">Rp${(r.lateFee || 0).toLocaleString()}</td><td class="font-medium">${paidStatus}</td></tr>`;
-    }).join('')}</tbody></table></div>`;
+    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-undo-alt text-pink-500"></i> Data Pengembalian</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th></tr></thead><tbody>${returns.map(r => { const fineColor = r.lateFee > 0 ? 'text-red-600' : 'text-pink-500'; return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${formatDate(r.loanDate)}</td><td class="font-medium">${formatDate(r.dueDate)}</td><td class="font-medium">${formatDate(r.returnDate)}</td><td class="${fineColor}">Rp${(r.lateFee || 0).toLocaleString()}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 
 async function renderAdminFines(container) {
     let returns = await loadReturns();
     const unpaid = returns.filter(r => r.lateFee > 0 && !r.finePaid);
-    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-coins text-pink-500"></i> Denda Belum Lunas</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th><th>Bukti</th><th>Aksi</th></tr></thead><tbody>${unpaid.map(r => {
-        let proofHtml = '-';
-        if (r.paymentProof) proofHtml = `<a href="${r.paymentProof}" target="_blank" class="text-blue-500"><i class="fas fa-image"></i> Lihat</a>`;
-        return `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${formatDate(r.dueDate)}</td><td class="font-medium">${formatDate(r.returnDate)}</td><td class="text-red-600">Rp${r.lateFee.toLocaleString()}</td><td class="font-medium">${proofHtml}</td><td class="font-medium"><button data-id="${r.id}" class="markPaidBtn bg-green-500 text-white px-2 py-1 rounded">Tandai Lunas</button></td></tr>`;
-    }).join('')}</tbody></table></div>`;
+    if (unpaid.length === 0) {
+        container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-coins text-pink-500"></i> Denda Belum Lunas</h2><div class="bg-white/50 p-6 rounded-xl text-center text-gray-500">Tidak ada denda yang belum lunas.</div>`;
+        return;
+    }
+    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-coins text-pink-500"></i> Denda Belum Lunas</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Peminjam</th><th>Buku</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th><th>Aksi</th></tr></thead><tbody>${unpaid.map(r => `<tr><td class="font-medium">${r.memberName}</td><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${formatDate(r.dueDate)}</td><td class="font-medium">${formatDate(r.returnDate)}</td><td class="text-red-600">Rp${r.lateFee.toLocaleString()}</td><td class="font-medium"><button data-id="${r.id}" class="markPaidBtn bg-green-500 text-white px-2 py-1 rounded">Tandai Lunas</button></td></tr>`).join('')}</tbody></table></div>`;
     setTimeout(() => {
         document.querySelectorAll(".markPaidBtn").forEach(btn => btn.onclick = async () => {
             const returnId = btn.dataset.id;
@@ -583,13 +524,12 @@ async function renderAdminFines(container) {
     }, 100);
 }
 
-// ==================== USER ====================
+// ========== USER ==========
 async function renderUserContent(section) {
     const container = document.getElementById("contentPanel");
     if (section === "userBorrow") await renderUserBorrow(container);
     else if (section === "userLoans") await renderUserLoans(container);
     else if (section === "userReturn") await renderUserReturn(container);
-    else if (section === "userFines") await renderUserFines(container);
 }
 
 async function renderUserBorrow(container) {
@@ -621,11 +561,7 @@ async function renderUserLoans(container) {
     if (!currentUser.memberId) return;
     let all = await loadLoans();
     const myLoans = all.filter(l => l.memberId === currentUser.memberId);
-    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => {
-        const overdue = l.status === 'borrowed' && isOverdue(l.dueDate);
-        const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam');
-        return `<tr><td class="text-2xl">${l.bookCover}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`;
-    }).join('')}</tbody></table></div>`;
+    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700">Peminjaman Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Cover</th><th>Buku</th><th>Tgl Pinjam</th><th>Jatuh Tempo</th><th>Status</th></tr></thead><tbody>${myLoans.map(l => { const overdue = l.status === 'borrowed' && isOverdue(l.dueDate); const status = l.status === 'returned' ? 'Dikembalikan' : (overdue ? 'Terlambat' : 'Dipinjam'); return `<tr><td class="text-2xl">${l.bookCover}</td><td class="font-medium">${l.bookTitle}</td><td class="font-medium">${formatDate(l.loanDate)}</td><td class="font-medium">${formatDate(l.dueDate)}</td><td class="font-medium">${status}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 
 async function renderUserReturn(container) {
@@ -641,96 +577,24 @@ async function renderUserReturn(container) {
         const loanData = loan.data();
         const returnDate = new Date().toISOString();
         const lateFee = calculateLateFee(loanData.dueDate, returnDate);
-        await addDoc(returnsCol, { loanId, returnDate, lateFee, finePaid: false, paymentProof: null });
+        await addDoc(returnsCol, { loanId, returnDate, lateFee, finePaid: true });
         await updateDoc(loanRef, { status: "returned", returnDate });
         const bookRef = doc(booksCol, loanData.bookId);
         const book = await getDoc(bookRef);
         if (book.exists()) await updateDoc(bookRef, { availableStock: book.data().availableStock + 1 });
-        if (lateFee > 0) showToast(`Buku dikembalikan. Denda Rp${lateFee.toLocaleString()}. Bayar di menu Denda Saya.`);
+        if (lateFee > 0) showToast(`Buku dikembalikan (terlambat). Denda otomatis lunas.`);
         else showToast("Buku berhasil dikembalikan (tepat waktu)");
         renderUserReturn(container);
     });
 }
 
-async function renderUserFines(container) {
-    if (!currentUser.memberId) return;
-    let allReturns = await loadReturns();
-    let allLoansData = await loadLoans();
-    const myLoanIds = allLoansData.filter(l => l.memberId === currentUser.memberId).map(l => l.id);
-    const myFines = allReturns.filter(r => myLoanIds.includes(r.loanId) && r.lateFee > 0);
-    container.innerHTML = `<h2 class="text-2xl font-bold mb-3 text-pink-700"><i class="fas fa-coins text-pink-500"></i> Denda Saya</h2><div class="overflow-x-auto"><table class="w-full table-modern bg-white/70 rounded-xl"><thead class="bg-pink-50"><tr><th>Buku</th><th>Jatuh Tempo</th><th>Tgl Kembali</th><th>Denda</th><th>Status</th><th>Aksi</th></tr></thead><tbody>${myFines.map(r => {
-        const paid = r.finePaid ? 'Lunas' : 'Belum Lunas';
-        return `<tr><td class="font-medium">${r.bookTitle}</td><td class="font-medium">${formatDate(r.dueDate)}</td><td class="font-medium">${formatDate(r.returnDate)}</td><td class="text-red-600">Rp${r.lateFee.toLocaleString()}</td><td class="font-medium">${paid}</td><td class="font-medium">${!r.finePaid ? `<button data-id="${r.id}" class="payFineBtn bg-green-600 text-white px-2 py-1 rounded">Bayar</button>` : '-'}</td></tr>`;
-    }).join('')}</tbody></table></div>`;
-    document.querySelectorAll(".payFineBtn").forEach(btn => btn.onclick = () => showPaymentModal(btn.dataset.id));
-}
-
-function showPaymentModal(returnId) {
-    const modal = document.getElementById("paymentModal");
-    const body = document.getElementById("paymentBody");
-    body.innerHTML = `<p class="mb-3">Silakan pilih metode pembayaran:</p><div class="flex gap-3 mb-4"><button id="payQris" class="bg-blue-500 text-white px-3 py-2 rounded">QRIS (Scan)</button><button id="payBca" class="bg-blue-500 text-white px-3 py-2 rounded">Transfer BCA</button></div><div id="paymentInstruction"></div><input type="file" id="proofImage" accept="image/*" class="mt-3 w-full"><p class="text-xs text-gray-500 mt-2">Upload bukti pembayaran (foto/ss)</p>`;
-    modal.classList.remove("hidden");
-    document.getElementById("payQris").onclick = () => {
-        document.getElementById("paymentInstruction").innerHTML = `<div class="bg-gray-100 p-3 rounded text-center"><i class="fas fa-qrcode fa-3x"></i><p>Scan QRIS berikut:</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DummyQRIS" class="mx-auto"><p class="text-xs">QRIS Dummy (demo)</p></div>`;
-    };
-    document.getElementById("payBca").onclick = () => {
-        document.getElementById("paymentInstruction").innerHTML = `<div class="bg-gray-100 p-3 rounded"><p><strong>Bank BCA</strong><br>No. Rekening: 1234567890<br>Atas nama: Perpustakaan Digital</p><p class="text-xs">Transfer sesuai nominal denda</p></div>`;
-    };
-    document.getElementById("confirmPaymentBtn").onclick = async () => {
-        const fileInput = document.getElementById("proofImage");
-        if (!fileInput.files.length) { showToast("Harap upload bukti pembayaran", "error"); return; }
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const proofDataUrl = e.target.result;
-            await updateDoc(doc(returnsCol, returnId), { paymentProof: proofDataUrl, finePaid: true });
-            showToast("Bukti terkirim, menunggu konfirmasi admin");
-            modal.classList.add("hidden");
-            renderUserFines(document.getElementById("contentPanel"));
-        };
-        reader.readAsDataURL(file);
-    };
-    document.getElementById("closePaymentBtn").onclick = () => modal.classList.add("hidden");
-    document.getElementById("cancelPaymentBtn").onclick = () => modal.classList.add("hidden");
-}
-
 // Event Listeners & Initialization
-document.getElementById("doLoginBtn").onclick = () => handleLogin(document.getElementById("loginUsername").value, document.getElementById("loginPassword").value);
-document.getElementById("doRegisterBtn").onclick = () => handleRegister(document.getElementById("regName").value, document.getElementById("regClass").value, document.getElementById("regPhone").value, document.getElementById("regUsername").value, document.getElementById("regPassword").value);
-document.getElementById("loginTabBtn").onclick = () => {
-    document.getElementById("loginForm").classList.remove("hidden");
-    document.getElementById("registerForm").classList.add("hidden");
-    document.getElementById("loginTabBtn").classList.add("bg-white","text-pink-600");
-    document.getElementById("registerTabBtn").classList.remove("bg-white","text-pink-600");
-};
-document.getElementById("registerTabBtn").onclick = () => {
-    document.getElementById("registerForm").classList.remove("hidden");
-    document.getElementById("loginForm").classList.add("hidden");
-    document.getElementById("registerTabBtn").classList.add("bg-white","text-pink-600");
-    document.getElementById("loginTabBtn").classList.remove("bg-white","text-pink-600");
-};
-document.getElementById("logoutBtn").onclick = () => {
-    localStorage.removeItem("perpustakaan_user");
-    currentUser = null;
-    document.getElementById("authSection").classList.remove("hidden");
-    document.getElementById("dashboardSection").classList.add("hidden");
-    showToast("Logout");
-};
-document.getElementById("closeModalBtn").onclick = closeModal;
-document.getElementById("modalCancelBtn").onclick = closeModal;
-document.getElementById("modalConfirmBtn").onclick = () => { if (modalCallback) modalCallback(); closeModal(); };
-
 setupPasswordToggle('toggleLoginPassword', 'loginPassword');
 setupPasswordToggle('toggleRegPassword', 'regPassword');
-
-// Auto login dari localStorage
+document.getElementById("doLoginBtn").onclick = () => handleLogin(document.getElementById("loginUsername").value, document.getElementById("loginPassword").value);
+document.getElementById("doRegisterBtn").onclick = () => handleRegister(document.getElementById("regName").value, document.getElementById("regClass").value, document.getElementById("regPhone").value, document.getElementById("regUsername").value, document.getElementById("regPassword").value);
+document.getElementById("loginTabBtn").onclick = () => { document.getElementById("loginForm").classList.remove("hidden"); document.getElementById("registerForm").classList.add("hidden"); document.getElementById("loginTabBtn").classList.add("bg-white","text-pink-600"); document.getElementById("registerTabBtn").classList.remove("bg-white","text-pink-600"); };
+document.getElementById("registerTabBtn").onclick = () => { document.getElementById("registerForm").classList.remove("hidden"); document.getElementById("loginForm").classList.add("hidden"); document.getElementById("registerTabBtn").classList.add("bg-white","text-pink-600"); document.getElementById("loginTabBtn").classList.remove("bg-white","text-pink-600"); };
+document.getElementById("logoutBtn").onclick = () => { localStorage.removeItem("perpustakaan_user"); currentUser = null; document.getElementById("authSection").classList.remove("hidden"); document.getElementById("dashboardSection").classList.add("hidden"); showToast("Logout"); };
 const saved = localStorage.getItem("perpustakaan_user");
-if (saved) {
-    try {
-        currentUser = JSON.parse(saved);
-        renderDashboard();
-    } catch(e) { console.error(e); }
-} else {
-    document.getElementById("authSection").classList.remove("hidden");
-    document.getElementById("dashboardSection").classList.add("hidden");
-}
+if (saved) { try { currentUser = JSON.parse(saved); renderDashboard(); } catch(e) { console.error(e); } } else { document.getElementById("authSection").classList.remove("hidden"); document.getElementById("dashboardSection").classList.add("hidden"); }
