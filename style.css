@@ -1,6 +1,6 @@
-/* Custom CSS tambahan (melengkapi Tailwind) */
+/* Custom CSS - Tema Biru */
 .bg-gradient-main {
-    background: linear-gradient(135deg, #fbc2eb 0%, #fdc5e6 25%, #f8a5c2 50%, #ffc3e0 100%);
+    background: linear-gradient(135deg, #a0c4ff 0%, #b8d4ff 25%, #7cb9e8 50%, #90caf9 100%);
     background-attachment: fixed;
 }
 
@@ -13,19 +13,19 @@
 }
 
 .btn-primary {
-    background: linear-gradient(95deg, #e91e63, #c2185b);
+    background: linear-gradient(95deg, #1e88e5, #1565c0);
     transition: all 0.2s;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px -5px #e91e6380;
+    box-shadow: 0 10px 20px -5px #1e88e580;
 }
 
 .table-modern td, 
 .table-modern th {
     padding: 12px 16px;
-    border-bottom: 1px solid #ffe2f0;
+    border-bottom: 1px solid #e0f0ff;
     vertical-align: middle;
 }
 
@@ -35,34 +35,32 @@
 }
 
 .table-modern tbody tr:hover {
-    background: #fff0f5;
+    background: #e8f4ff;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: #ffe0f0;
+    background: #d4eaff;
     border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
-    background: #e91e63;
+    background: #1e88e5;
     border-radius: 10px;
 }
 
 .password-toggle, 
 .password-toggle-inline {
     cursor: pointer;
-    color: #e91e63;
+    color: #1e88e5;
 }
 
 .relative-field {
     position: relative;
 }
 
-/* Animasi float (keyframes sudah didefinisikan di tailwind.config) */
 .animate-float {
     animation: float 6s ease-in-out infinite;
 }

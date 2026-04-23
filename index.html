@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Perpustakaan</title>
-    <!-- Tailwind CSS CDN + Konfigurasi Ekstensi -->
+    <title>Perpustakaan Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -17,12 +16,9 @@
             }
         }
     </script>
-    <!-- CSS Eksternal (Custom Styles) -->
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Import Map untuk Firebase -->
     <script type="importmap">
         {
             "imports": {
@@ -33,11 +29,11 @@
     </script>
 </head>
 <body class="bg-gradient-main font-sans text-gray-800 min-h-screen flex flex-col">
-    <!-- Background Animasi -->
+    <!-- Background animasi biru -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="absolute top-20 left-10 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float"></div>
-        <div class="absolute bottom-20 right-10 w-80 h-80 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float" style="animation-delay: -2s;"></div>
-        <div class="absolute top-1/2 left-1/3 w-60 h-60 bg-fuchsia-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: -4s;"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float" style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/2 left-1/3 w-60 h-60 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: -4s;"></div>
     </div>
 
     <div id="app" class="relative z-10 container mx-auto px-4 py-6 max-w-7xl flex-grow">
@@ -45,55 +41,56 @@
         <div id="authSection" class="flex justify-center items-center min-h-[80vh]">
             <div class="glass-card w-full max-w-md p-8">
                 <div class="text-center mb-6">
-                    <i class="fas fa-book-open text-5xl text-pink-600 drop-shadow"></i>
-                    <h2 class="text-3xl font-bold mt-2 text-pink-800">Perpustakaan Incher</h2>
-                    <p class="text-pink-600">Insan Cemerlang</p>
+                    <i class="fas fa-book-open text-5xl text-blue-600 drop-shadow"></i>
+                    <h2 class="text-3xl font-bold mt-2 text-blue-800">Perpustakaan Incher</h2>
+                    <p class="text-blue-600">SMK Insan Cemerlang</p>
                 </div>
-                <div class="flex gap-2 mb-6 bg-pink-100 p-1 rounded-xl">
-                    <button id="loginTabBtn" class="w-1/2 py-2 font-semibold rounded-lg bg-white text-pink-600 shadow-sm">Login</button>
-                    <button id="registerTabBtn" class="w-1/2 py-2 font-semibold rounded-lg text-pink-500">Daftar Anggota</button>
+                <div class="flex gap-2 mb-6 bg-blue-100 p-1 rounded-xl">
+                    <button id="loginTabBtn" class="w-1/2 py-2 font-semibold rounded-lg bg-white text-blue-600 shadow-sm">Login</button>
+                    <button id="registerTabBtn" class="w-1/2 py-2 font-semibold rounded-lg text-blue-500">Daftar Anggota</button>
                 </div>
                 <div id="loginForm">
                     <div class="mb-3">
-                        <input type="text" id="loginUsername" placeholder="Username" class="w-full p-3 border border-pink-200 rounded-xl">
+                        <input type="text" id="loginUsername" placeholder="Username" class="w-full p-3 border border-blue-200 rounded-xl">
                     </div>
                     <div class="mb-4 relative-field">
-                        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-3 border border-pink-200 rounded-xl pr-10">
+                        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-3 border border-blue-200 rounded-xl pr-10">
                         <i class="fas fa-eye-slash password-toggle absolute right-3 top-1/2 transform -translate-y-1/2" id="toggleLoginPassword"></i>
                     </div>
                     <button id="doLoginBtn" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg">Masuk</button>
                 </div>
                 <div id="registerForm" class="hidden">
-                    <input type="text" id="regName" placeholder="Nama Lengkap" class="w-full mb-2 p-2 border border-pink-200 rounded">
-                    <input type="text" id="regClass" placeholder="Kelas" class="w-full mb-2 p-2 border border-pink-200 rounded">
-                    <input type="text" id="regPhone" placeholder="Telepon" class="w-full mb-2 p-2 border border-pink-200 rounded">
-                    <input type="text" id="regUsername" placeholder="Username" class="w-full mb-2 p-2 border border-pink-200 rounded">
+                    <input type="text" id="regName" placeholder="Nama Lengkap" class="w-full mb-2 p-2 border border-blue-200 rounded">
+                    <input type="text" id="regClass" placeholder="Kelas" class="w-full mb-2 p-2 border border-blue-200 rounded">
+                    <input type="text" id="regPhone" placeholder="Telepon" class="w-full mb-2 p-2 border border-blue-200 rounded">
+                    <input type="text" id="regUsername" placeholder="Username" class="w-full mb-2 p-2 border border-blue-200 rounded">
                     <div class="relative-field mb-3">
-                        <input type="password" id="regPassword" placeholder="Password" class="w-full p-2 border border-pink-200 rounded pr-8">
+                        <input type="password" id="regPassword" placeholder="Password" class="w-full p-2 border border-blue-200 rounded pr-8">
                         <i class="fas fa-eye-slash password-toggle absolute right-2 top-1/2 transform -translate-y-1/2" id="toggleRegPassword"></i>
                     </div>
-                    <button id="doRegisterBtn" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-bold">Daftar</button>
+                    <button id="doRegisterBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-bold">Daftar</button>
                 </div>
             </div>
         </div>
+
         <!-- Dashboard Utama -->
         <div id="dashboardSection" class="hidden">
             <div class="glass-card p-4 flex flex-wrap justify-between items-center mb-6">
                 <div class="flex items-center gap-3">
-                    <i class="fas fa-landmark text-3xl text-pink-700"></i>
+                    <i class="fas fa-landmark text-3xl text-blue-700"></i>
                     <div>
-                        <h1 class="text-2xl font-bold text-pink-800">Perpustakaan Incher</h1>
-                        <p>Halo, <span id="userNameDisplay"></span> · <span id="userRoleBadge" class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-sm"></span></p>
+                        <h1 class="text-2xl font-bold text-blue-800">Perpustakaan Digital</h1>
+                        <p>Halo, <span id="userNameDisplay"></span> · <span id="userRoleBadge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-sm"></span></p>
                     </div>
                 </div>
-                <button id="logoutBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-full shadow"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button id="logoutBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full shadow"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
             <div id="navTabs" class="flex flex-wrap gap-2 mb-6"></div>
-            <div id="contentPanel" class="glass-card p-5 min-h-[500px]"><div class="text-center text-pink-500">Memuat...</div></div>
+            <div id="contentPanel" class="glass-card p-5 min-h-[500px]"><div class="text-center text-blue-500">Memuat...</div></div>
         </div>
     </div>
 
-    <footer class="relative z-10 text-center py-4 text-pink-700 text-sm border-t border-pink-200 bg-white/30 backdrop-blur-sm mt-4">
+    <footer class="relative z-10 text-center py-4 text-blue-700 text-sm border-t border-blue-200 bg-white/30 backdrop-blur-sm mt-4">
         <div class="container mx-auto px-4"><i class="fas fa-book-open mr-1"></i> Perpustakaan SMK Insan Cemerlang © 2026 <i class="fas fa-heart text-red-400"></i></div>
     </footer>
 
@@ -101,13 +98,13 @@
     <div id="modalForm" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-bg transition-all">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="modalTitle" class="text-xl font-bold text-pink-700"></h3>
+                <h3 id="modalTitle" class="text-xl font-bold text-blue-700"></h3>
                 <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </div>
             <div id="modalBody"></div>
             <div class="mt-5 flex justify-end gap-2">
-                <button id="modalCancelBtn" class="px-4 py-2 border border-pink-300 rounded-lg text-pink-600">Batal</button>
-                <button id="modalConfirmBtn" class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600">Simpan</button>
+                <button id="modalCancelBtn" class="px-4 py-2 border border-blue-300 rounded-lg text-blue-600">Batal</button>
+                <button id="modalConfirmBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button>
             </div>
         </div>
     </div>
@@ -116,18 +113,17 @@
     <div id="paymentModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-bg transition-all">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-pink-700">Bayar Denda</h3>
+                <h3 class="text-xl font-bold text-blue-700">Bayar Denda</h3>
                 <button id="closePaymentBtn" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </div>
             <div id="paymentBody"></div>
             <div class="mt-5 flex justify-end gap-2">
-                <button id="cancelPaymentBtn" class="px-4 py-2 border border-pink-300 rounded-lg text-pink-600">Batal</button>
-                <button id="confirmPaymentBtn" class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600">Kirim Bukti</button>
+                <button id="cancelPaymentBtn" class="px-4 py-2 border border-blue-300 rounded-lg text-blue-600">Batal</button>
+                <button id="confirmPaymentBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Kirim Bukti</button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Utama (Module) -->
     <script type="module" src="main.js"></script>
 </body>
 </html>
